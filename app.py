@@ -121,3 +121,21 @@ def remove_exercise(id):
   exercise_id=db.session.execute(sql, { "id": id, "user_id": session["user_id"] })
   db.session.commit()
   return Response("", 204)
+
+@app.route("/update-exercise/<int:id>", methods=["POST"])
+def update_exercise(id):
+  if ("username" not in session):
+    return redirect("/")
+  name = request.form["exercise_name"]
+  sets = request.form["exercise_sets"]
+  reps = request.form["exercise_reps"]
+  program_id = request.form["program_id"]
+  
+  # validate that program belongs to the user. If not just redirect back to program without deleting.
+  result = db.session.execute(text('SELECT id, name FROM programs WHERE id = :id AND userId = :user'), {"id":program_id, "user": session["user_id"]})
+  program = result.fetchone()
+  if (program):
+    sql = text("UPDATE exercises SET name=:name, reps=:reps, sets=:sets WHERE id=:id AND program_id=:program_id AND user_id=user_id")
+    exercise_id= db.session.execute(sql, { "id": id, "name": name, "sets": sets, "reps": reps, "program_id": program_id, "user_id": session["user_id"] })
+    db.session.commit()
+  return redirect("/edit-program/" + str(program_id))

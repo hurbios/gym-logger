@@ -17,25 +17,86 @@
       }
     }
   }
+
+  function onSaveButtonClick(id) {
+    if (id) {
+      if (confirm("Are you sure you want to delete the exercise?")) {
+        const xhr = new XMLHttpRequest()
+        xhr.open("PUT", "/update-exercise/" + id.toString())
+        xhr.onload = function () {
+          if (xhr.status === 204 || xhr.status === 200) {
+            location.reload()
+          }
+        }
+        xhr.onerror = function() {
+          alert("Exercise deletion failed.")
+        }
+        xhr.send()
+      }
+    }
+  }
+
+  function disableButtons() {
+    const buttons = document.getElementsByClassName("button")
+    for (key in buttons){
+      buttons[key].disabled = true
+    }
+  }
+
+  function createTableColumn(type, attribute, attributeText, inputType, name, value, onClickHandler, innerText) {
+    const element = document.createElement(type)
+    element.setAttribute(attribute, attributeText)
+    element.setAttribute("form", "exercise-row-form")
+    element.setAttribute("form", "exercise-row-form")
+    if (inputType) element.setAttribute("type", inputType)
+    if (name) element.setAttribute("name", name)
+    if (value) element.value = value
+    if (onClickHandler) element.onclick=onClickHandler
+    if (innerText) element.innerText=innerText
+
+    const td = document.createElement("td")
+    td.appendChild(element)
+    return td
+  }
+  
+
+  function onEditButtonClick(id) {
+    disableButtons()
+    console.log(document.getElementById(`exercise-${id}-name`))
+    const row = document.getElementById(`exercise-row-${id}`)
+    const form = document.getElementById("exercise-row-form")
+    form.setAttribute("action", "/update-exercise/" + id.toString())
+    const td1 = createTableColumn("input", "placeholder", "exercise name", "text", "exercise_name", document.getElementById(`exercise-${id}-name`).getAttribute("data"))
+    const td2 = createTableColumn("input", "placeholder", "number of sets", "number", "exercise_sets", document.getElementById(`exercise-${id}-sets`).getAttribute("data"))
+    const td3 = createTableColumn("input", "placeholder", "number of reps", "number", "exercise_reps", document.getElementById(`exercise-${id}-reps`).getAttribute("data"))
+    const td4 = createTableColumn("button", "type", "submit", null, null, null, null, "save")
+    const td5 = createTableColumn("button", "type", "button", null, null, null, (e) => location.reload(), "cancel")
+    row.replaceChildren(td1,td2,td3,td4,td5)
+    
+  }
 </script>
 
 <a href="/">Home</a> / edit-program
 <h1>{{ program_name }}</h1>
 <i>Here you can edit your workout program.</i>
 <p></p>
+<form id="exercise-row-form" method="POST"></form>
+<input type="number" name="program_id" value="{{ program_id }}" form="exercise-row-form" hidden>
 <table>
   <tr>
     <th>Exercise name</th>
-    <th>Reps</th>
     <th>Sets</th>
-    <th>Edit / Delete</th>
+    <th>Reps</th>
+    <th>Edit</th>
+    <th>Delete</th>
   </tr>
   {% for exercise in exercises %}
-  <tr key="{{ exercise.id }}">
-    <td>{{ exercise.name }}</td>
-    <td>{{ exercise.sets }}</td>
-    <td>{{ exercise.reps }}</td>
-    <td><button onclick="onDeleteButtonClick({{ exercise.id }})">Delete</button></td>
+  <tr key="{{ exercise.id }}" id="exercise-row-{{ exercise.id }}">
+    <td id="exercise-{{ exercise.id }}-name" data="{{ exercise.name }}">{{ exercise.name }}</td>
+    <td id="exercise-{{ exercise.id }}-sets" data="{{ exercise.sets }}">{{ exercise.sets }}</td>
+    <td id="exercise-{{ exercise.id }}-reps" data="{{ exercise.reps }}">{{ exercise.reps }}</td>
+    <td><button onclick="onEditButtonClick({{ exercise.id }})" class="edit button">Edit</button></td>
+    <td><button onclick="onDeleteButtonClick({{ exercise.id }})" class="delete button">Delete</button></td>
   </tr>
   {% endfor %}
 </table>
@@ -46,5 +107,5 @@
   <input type="number" name="exercise_sets" placeholder="number of sets">
   <input type="number" name="exercise_reps" placeholder="number of reps">
   <input type="number" name="program_id" value="{{ program_id }}" hidden>
-  <button type="send">Add</button>
+  <button type="send" class="submit button">Add</button>
 </form>
