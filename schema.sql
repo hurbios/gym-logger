@@ -1,13 +1,13 @@
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username TEXT,
+  pwhash TEXT
+);
 
 CREATE TABLE programs (
   id SERIAL PRIMARY KEY,
   name TEXT,
-  user INTEGER
-);
-
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  username TEXT,password TEXT
+  user_id INTEGER REFERENCES users
 );
 
 CREATE TABLE exercises (

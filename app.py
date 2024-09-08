@@ -16,8 +16,8 @@ app.secret_key = getenv("SECRET_KEY")
 def index():
   programs = []
   if("username" in session):
-    result = db.session.execute(text('SELECT id, name FROM programs WHERE userId = :user'), {"user": session["user_id"]})
-    programs = result.fetchall() 
+    result = db.session.execute(text('SELECT id, name FROM programs WHERE user_id = :user_id'), {"user_id": session["user_id"]})
+    programs = result.fetchall()
   return render_template("index.html", programs = programs)
 
 #### AUTH ####
@@ -26,7 +26,7 @@ def login():
   username = request.form["username"]
   password = request.form["password"]
 
-  result = db.session.execute(text('SELECT id,password FROM users WHERE username = :username'), {"username":username})
+  result = db.session.execute(text('SELECT id, pwhash FROM users WHERE username = :username'), {"username":username})
   resultArr = result.fetchone()
   if(resultArr and len(resultArr)>0):
     user_id = resultArr[0]
@@ -57,9 +57,10 @@ def create_user_api():
   username = request.form["username"]
   password = request.form["password"]
   hash_value = generate_password_hash(password, method="pbkdf2") # Using different less secure method here because macOS doesn't come with openSSL
-  sql = text("INSERT INTO users (username, password) VALUES (:username, :password) RETURNING id")
-  user_id= db.session.execute(sql, {"username":username, "password":hash_value})
+  sql = text("INSERT INTO users (username, pwhash) VALUES (:username, :pwhash) RETURNING id")
+  result = db.session.execute(sql, {"username":username, "pwhash":hash_value})
   db.session.commit()
+  user_id = result.fetchone()[0]
   session["username"] = username
   session["user_id"] = user_id
   return redirect("/")
@@ -78,7 +79,7 @@ def create_program_api():
   if("username" not in session):
     return redirect("/")
   name = request.form['programName']
-  result = db.session.execute(text('INSERT INTO programs (name, userId) VALUES (:name, :user) RETURNING id'), {"name":name, "user": session["user_id"]})
+  result = db.session.execute(text('INSERT INTO programs (name, user_id) VALUES (:name, :user_id) RETURNING id'), {"name":name, "user_id": session["user_id"]})
   poll_id = result.fetchone()[0]
   db.session.commit()
   return redirect("/edit-program/"+str(poll_id))
@@ -87,9 +88,9 @@ def create_program_api():
 def edit_program(id):
   if("username" not in session):
     return redirect("/")
-  result = db.session.execute(text('SELECT id, name FROM programs WHERE id = :id AND userId = :user'), {"id":id, "user": session["user_id"]})
+  result = db.session.execute(text('SELECT id, name FROM programs WHERE id = :id AND user_id = :user_id'), {"id":id, "user_id": session["user_id"]})
   program = result.fetchone()
-  result = db.session.execute(text('SELECT id, name, sets, reps FROM exercises WHERE program_id = :id AND user_id = :user'), {"id":id, "user": session["user_id"]})
+  result = db.session.execute(text('SELECT id, name, sets, reps FROM exercises WHERE program_id = :id AND user_id = :user_id'), {"id":id, "user_id": session["user_id"]})
   exercises = result.fetchall()
   if(not program or len(program) < 1):
     return redirect("/")
@@ -105,7 +106,7 @@ def add_exercise():
   program_id = request.form["program_id"]
   
   # validate that program belongs to the user. If not just redirect back to program without deleting.
-  result = db.session.execute(text('SELECT id, name FROM programs WHERE id = :id AND userId = :user'), {"id":program_id, "user": session["user_id"]})
+  result = db.session.execute(text('SELECT id, name FROM programs WHERE id = :id AND user_id = :user_id'), {"id":program_id, "user_id": session["user_id"]})
   program = result.fetchone()
   if (program):
     sql = text("INSERT INTO exercises (name, reps, sets, program_id, user_id) VALUES (:name, :reps, :sets, :program_id, :user_id) RETURNING id")
@@ -132,7 +133,7 @@ def update_exercise(id):
   program_id = request.form["program_id"]
   
   # validate that program belongs to the user. If not just redirect back to program without deleting.
-  result = db.session.execute(text('SELECT id, name FROM programs WHERE id = :id AND userId = :user'), {"id":program_id, "user": session["user_id"]})
+  result = db.session.execute(text('SELECT id, name FROM programs WHERE id = :id AND user_id = :user_id'), {"id":program_id, "user_id": session["user_id"]})
   program = result.fetchone()
   if (program):
     sql = text("UPDATE exercises SET name=:name, reps=:reps, sets=:sets WHERE id=:id AND program_id=:program_id AND user_id=user_id")
