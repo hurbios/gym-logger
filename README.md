@@ -42,5 +42,5 @@ Run production version wiht `flask run` or run development version with `flask -
   - backend - TODO
 - Workout program Deletion - TODO
 - Dev setup - TODO
-- DB init - TODO
-- test data creation - TODO
+- DB init - Done
+- test data creation - Done

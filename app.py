@@ -4,12 +4,24 @@ from os import getenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 from werkzeug.security import check_password_hash, generate_password_hash
+from init_db import init_database, add_test_data
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 app.secret_key = getenv("SECRET_KEY")
+env = getenv("FLASK_ENV")
+
+#### ENDPOINT ONLY FOR INITIALIZING DB - THIS WILL REPLACE ALL DATA IN TABLES ####
+@app.route("/init_db")
+def init_db():
+  print(env)
+  if (env != 'develop'):
+    return Response("", 404)
+  init_database(db)
+  add_test_data(db)
+  return Response("All good", 200)
 
 #### Landing page ####
 @app.route("/")
