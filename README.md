@@ -35,6 +35,12 @@ Run production version wiht `flask run` or run development version with `flask -
 - Workout program creation
   - exercise additions -- Done
   - exercise deletions -- Done
-  - exercise modification -- TODO
-- Workout program edition -- TODO
-- Workout program 
+  - exercise edit -- Done
+- Workout program name edition -- TODO
+- Input validations
+  - frontend - TODO
+  - backend - TODO
+- Workout program Deletion - TODO
+- Dev setup - TODO
+- DB init - TODO
+- test data creation - TODO
