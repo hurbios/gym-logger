@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, session, Response
 from os import getenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
@@ -97,13 +97,27 @@ def edit_program(id):
 
 @app.route("/add-exercise", methods=["POST"])
 def add_exercise():
-  if("username" not in session):
+  if ("username" not in session):
     return redirect("/")
   name = request.form["exercise_name"]
   sets = request.form["exercise_sets"]
   reps = request.form["exercise_reps"]
-  program_id = request.form["program_id"] # TODO: validate that program belongs to the user
-  sql = text("INSERT INTO exercises (name, reps, sets, program_id, user_id) VALUES (:name, :reps, :sets, :program_id, :user_id) RETURNING id")
-  exercise_id= db.session.execute(sql, { "name": name, "sets": sets, "reps": reps, "program_id": program_id, "user_id": session["user_id"] })
-  db.session.commit()
+  program_id = request.form["program_id"]
+  
+  # validate that program belongs to the user. If not just redirect back to program without deleting.
+  result = db.session.execute(text('SELECT id, name FROM programs WHERE id = :id AND userId = :user'), {"id":program_id, "user": session["user_id"]})
+  program = result.fetchone()
+  if (program):
+    sql = text("INSERT INTO exercises (name, reps, sets, program_id, user_id) VALUES (:name, :reps, :sets, :program_id, :user_id) RETURNING id")
+    exercise_id= db.session.execute(sql, { "name": name, "sets": sets, "reps": reps, "program_id": program_id, "user_id": session["user_id"] })
+    db.session.commit()
   return redirect("/edit-program/" + str(program_id))
+
+@app.route("/delete_exercise/<int:id>", methods=["DELETE"])
+def remove_exercise(id):
+  if("username" not in session):
+    return redirect("/")
+  sql = text("DELETE FROM exercises WHERE id = :id AND user_id = :user_id")
+  exercise_id=db.session.execute(sql, { "id": id, "user_id": session["user_id"] })
+  db.session.commit()
+  return Response("", 204)

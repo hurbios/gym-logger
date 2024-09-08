@@ -1,3 +1,23 @@
+<script>
+  function onDeleteButtonClick(id) {
+    if (id) {
+      if (confirm("Are you sure you want to delete the exercise?")) {
+        const xhr = new XMLHttpRequest()
+        xhr.open("DELETE", "/delete_exercise/" + id.toString())
+        xhr.onload = function () {
+          if (xhr.status === 204 || xhr.status === 200) {
+            location.reload()
+          }
+        }
+        xhr.onerror = function() {
+          alert("Exercise deletion failed.")
+        }
+        xhr.send()
+      }
+    }
+  }
+</script>
+
 <h1>{{ program_name }}</h1>
 <i>Here you can edit your workout program.</i>
 <p></p>
@@ -6,12 +26,14 @@
     <th>Exercise name</th>
     <th>Reps</th>
     <th>Sets</th>
+    <th>Edit / Delete</th>
   </tr>
   {% for exercise in exercises %}
-  <tr key="{{ exercise.id }}"">
+  <tr key="{{ exercise.id }}">
     <td>{{ exercise.name }}</td>
     <td>{{ exercise.sets }}</td>
     <td>{{ exercise.reps }}</td>
+    <td><button onclick="onDeleteButtonClick({{ exercise.id }})">Delete</button></td>
   </tr>
   {% endfor %}
 </table>
