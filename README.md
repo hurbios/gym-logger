@@ -24,3 +24,17 @@ Run production version wiht `flask run` or run development version with `flask -
 
 
 /Applications/Postgres.app/Contents/Versions/latest/bin/psql
+
+
+## TODO
+- DB connection -- Done
+- authentication -- Done
+- user creation -- Done
+- Program creation -- Done
+- Reformat endpoints -- Done
+- Workout program creation
+  - exercise additions -- Done
+  - exercise deletions -- TODO
+  - exercise modification -- TODO
+- Workout program edition -- TODO
+- Workout program 
