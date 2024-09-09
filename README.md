@@ -36,11 +36,13 @@ Run production version wiht `flask run` or run development version with `flask -
   - exercise additions -- Done
   - exercise deletions -- Done
   - exercise edit -- Done
+- DB init - Done
+- test data creation - Done
+- add pylint - Done
 - Workout program name edition -- TODO
 - Input validations
   - frontend - TODO
   - backend - TODO
 - Workout program Deletion - TODO
 - Dev setup - TODO
-- DB init - Done
-- test data creation - Done
+- add CSRF protection -TODO

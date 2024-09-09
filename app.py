@@ -1,6 +1,6 @@
+from os import getenv
 from flask import Flask
 from flask import redirect, render_template, request, session, Response
-from os import getenv
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -28,7 +28,10 @@ def init_db():
 def index():
     programs = []
     if 'username' in session:
-        result = db.session.execute(text('SELECT id, name FROM programs WHERE user_id = :user_id'), {'user_id': session['user_id']})
+        result = db.session.execute(
+            text('SELECT id, name FROM programs WHERE user_id = :user_id'),
+            {'user_id': session['user_id']}
+        )
         programs = result.fetchall()
     return render_template('index.html', programs=programs)
 
@@ -38,7 +41,10 @@ def login():
     username = request.form['username']
     password = request.form['password']
 
-    result = db.session.execute(text('SELECT id, pwhash FROM users WHERE username = :username'), {'username':username})
+    result = db.session.execute(
+        text('SELECT id, pwhash FROM users WHERE username = :username'),
+        {'username':username}
+    )
     resultArr = result.fetchone()
     if resultArr and len(resultArr)>0:
         user_id = resultArr[0]
@@ -68,7 +74,9 @@ def create_user_api():
         return redirect('/')
     username = request.form['username']
     password = request.form['password']
-    hash_value = generate_password_hash(password, method='pbkdf2') # Using different less secure method here because macOS doesn't come with openSSL
+
+    # Using different less secure method here because macOS doesn't come with openSSL
+    hash_value = generate_password_hash(password, method='pbkdf2')
     sql = text('INSERT INTO users (username, pwhash) VALUES (:username, :pwhash) RETURNING id')
     result = db.session.execute(sql, {'username':username, 'pwhash':hash_value})
     db.session.commit()
@@ -91,7 +99,10 @@ def create_program_api():
     if 'username' not in session:
         return redirect('/')
     name = request.form['programName']
-    result = db.session.execute(text('INSERT INTO programs (name, user_id) VALUES (:name, :user_id) RETURNING id'), {'name':name, 'user_id': session['user_id']})
+    result = db.session.execute(
+        text('INSERT INTO programs (name, user_id) VALUES (:name, :user_id) RETURNING id'),
+        {'name':name, 'user_id': session['user_id']}
+    )
     poll_id = result.fetchone()[0]
     db.session.commit()
     return redirect('/edit-program/'+str(poll_id))
@@ -100,9 +111,15 @@ def create_program_api():
 def edit_program(id):
     if 'username' not in session:
         return redirect('/')
-    result = db.session.execute(text('SELECT id, name FROM programs WHERE id = :id AND user_id = :user_id'), {'id':id, 'user_id': session['user_id']})
+    result = db.session.execute(
+        text('SELECT id, name FROM programs WHERE id = :id AND user_id = :user_id'),
+        {'id':id, 'user_id': session['user_id']}
+    )
     program = result.fetchone()
-    result = db.session.execute(text('SELECT id, name, sets, reps FROM exercises WHERE program_id = :id AND user_id = :user_id'), {'id':id, 'user_id': session['user_id']})
+    result = db.session.execute(
+        text('SELECT id, name, sets, reps FROM exercises WHERE program_id = :id AND user_id = :user_id'),
+        {'id':id, 'user_id': session['user_id']}
+    )
     exercises = result.fetchall()
     if not program or len(program) < 1:
         return redirect('/')
@@ -116,22 +133,42 @@ def add_exercise():
     sets = request.form['exercise_sets']
     reps = request.form['exercise_reps']
     program_id = request.form['program_id']
-  
-    # validate that program belongs to the user. If not just redirect back to program without deleting.
-    result = db.session.execute(text('SELECT id, name FROM programs WHERE id = :id AND user_id = :user_id'), {'id':program_id, 'user_id': session['user_id']})
+    # Validate that program belongs to the user.
+    # If not just redirect back to program without deleting.
+    result = db.session.execute(
+        text('SELECT id, name FROM programs WHERE id = :id AND user_id = :user_id'),
+        {'id':program_id, 'user_id': session['user_id']}
+    )
     program = result.fetchone()
     if program:
-        sql = text('INSERT INTO exercises (name, reps, sets, program_id, user_id) VALUES (:name, :reps, :sets, :program_id, :user_id) RETURNING id')
-        exercise_id= db.session.execute(sql, { 'name': name, 'sets': sets, 'reps': reps, 'program_id': program_id, 'user_id': session['user_id'] })
+        db.session.execute(
+            text('INSERT INTO exercises (name, reps, sets, program_id, user_id) \
+                VALUES (:name, :reps, :sets, :program_id, :user_id) \
+                RETURNING id'),
+            {
+                'name': name,
+                'sets': sets,
+                'reps': reps,
+                'program_id': program_id,
+                'user_id': session['user_id'],
+            }
+        )
         db.session.commit()
+
     return redirect('/edit-program/' + str(program_id))
 
 @app.route('/delete_exercise/<int:id>', methods=['DELETE'])
 def remove_exercise(id):
     if 'username' not in session:
         return redirect('/')
-    sql = text('DELETE FROM exercises WHERE id = :id AND user_id = :user_id')
-    exercise_id=db.session.execute(sql, { 'id': id, 'user_id': session['user_id'] })
+
+    db.session.execute(
+        text('DELETE FROM exercises WHERE id = :id AND user_id = :user_id'),
+        {
+            'id': id,
+            'user_id': session['user_id']
+        }
+    )
     db.session.commit()
     return Response('', 204)
 
@@ -143,12 +180,29 @@ def update_exercise(id):
     sets = request.form['exercise_sets']
     reps = request.form['exercise_reps']
     program_id = request.form['program_id']
-    
-    # validate that program belongs to the user. If not just redirect back to program without deleting.
-    result = db.session.execute(text('SELECT id, name FROM programs WHERE id = :id AND user_id = :user_id'), {'id':program_id, 'user_id': session['user_id']})
+    # validate that program belongs to the user.
+    # If not just redirect back to program without deleting.
+    result = db.session.execute(
+        text('SELECT id, name FROM programs WHERE id = :id AND user_id = :user_id'),
+        {'id':program_id, 'user_id': session['user_id']}
+    )
     program = result.fetchone()
     if program:
-        sql = text('UPDATE exercises SET name=:name, reps=:reps, sets=:sets WHERE id=:id AND program_id=:program_id AND user_id=user_id')
-        exercise_id= db.session.execute(sql, { 'id': id, 'name': name, 'sets': sets, 'reps': reps, 'program_id': program_id, 'user_id': session['user_id'] })
+        db.session.execute(
+            text(
+                """
+                    UPDATE exercises SET name=:name, reps=:reps, sets=:sets 
+                    WHERE id=:id AND program_id=:program_id AND user_id=user_id
+                """
+            ),
+            {
+                'id': id,
+                'name': name,
+                'sets': sets,
+                'reps': reps,
+                'program_id': program_id,
+                'user_id': session['user_id'] 
+            }
+        )
         db.session.commit()
     return redirect('/edit-program/' + str(program_id))
