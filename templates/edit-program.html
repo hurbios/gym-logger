@@ -62,7 +62,6 @@
 
   function onEditButtonClick(id) {
     disableButtons()
-    console.log(document.getElementById(`exercise-${id}-name`))
     const row = document.getElementById(`exercise-row-${id}`)
     const form = document.getElementById("exercise-row-form")
     form.setAttribute("action", "/update-exercise/" + id.toString())
