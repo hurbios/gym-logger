@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash
 
 def init_database(db):
     sql = """
+        DROP TABLE IF EXISTS templates;
         DROP TABLE IF EXISTS exercises;
         DROP TABLE IF EXISTS programs;
         DROP TABLE IF EXISTS users;
@@ -25,7 +26,13 @@ def init_database(db):
             reps INTEGER,
             program_id INTEGER REFERENCES programs,
             user_id INTEGER REFERENCES users
-        );  
+        );
+
+        CREATE TABLE templates (
+            id SERIAL PRIMARY KEY,
+            name TEXT,
+            user_id INTEGER REFERENCES users
+        );
     """
     db.session.execute(text(sql))
     db.session.commit()
@@ -63,6 +70,19 @@ def add_test_data(db):
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (17, 'gobblet squat', 3, 20, 4, 2);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (18, 'land mines', 3, 20, 4, 2);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (19, 'barbell curl', 3, 20, 4, 2);
+
+        INSERT INTO templates (id, name) VALUES (1, 'barbell curl');
+        INSERT INTO templates (id, name) VALUES (2, 'bench press');
+        INSERT INTO templates (id, name) VALUES (3, 'back squat');
+        INSERT INTO templates (id, name) VALUES (4, 'front squat');
+        INSERT INTO templates (id, name) VALUES (5, 'deadlift');
+        INSERT INTO templates (id, name) VALUES (6, 'sumo deadlift');
+        INSERT INTO templates (id, name) VALUES (7, 'push press');
+        INSERT INTO templates (id, name) VALUES (8, 'bicep curl');
+        INSERT INTO templates (id, name) VALUES (9, 'leg press');
+        INSERT INTO templates (id, name) VALUES (10, 'leg curl');
+        INSERT INTO templates (id, name) VALUES (11, 'pull up');
+        INSERT INTO templates (id, name) VALUES (12, 'chin up');
     """
     db.session.execute(text(sql), { "hash1":hash1, "hash2":hash2 })
     db.session.commit()
@@ -73,4 +93,6 @@ def add_test_data(db):
     db.session.execute(text("SELECT setval(pg_get_serial_sequence('programs','id'), 4)"))
     db.session.commit()
     db.session.execute(text("SELECT setval(pg_get_serial_sequence('exercises','id'), 19)"))
+    db.session.commit()
+    db.session.execute(text("SELECT setval(pg_get_serial_sequence('templates','id'), 12)"))
     db.session.commit()

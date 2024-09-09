@@ -39,7 +39,10 @@ Run production version wiht `flask run` or run development version with `flask -
 - DB init - Done
 - test data creation - Done
 - add pylint - Done
-- Workout program name edition -- TODO
+- Workout program name edition - Done
+- Add selectable exercise templates - Done
+- Add possiblity to add results - TODO
+- Disable workout program edition if results entered - TODO
 - Input validations
   - frontend - TODO
   - backend - TODO

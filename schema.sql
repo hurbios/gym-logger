@@ -18,3 +18,15 @@ CREATE TABLE exercises (
   program_id INTEGER REFERENCES programs,
   user_id INTEGER REFERENCES users
 );
+
+CREATE TABLE results (
+  id SERIAL PRIMARY KEY,
+  exercise_id INTEGER REFERENCES exercises,
+  result INTEGER
+);
+
+CREATE TABLE templates (
+  id SERIAL PRIMARY KEY,
+  name TEXT,
+  user_id INTEGER REFERENCES users
+);

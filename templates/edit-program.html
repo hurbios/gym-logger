@@ -74,6 +74,11 @@
     row.replaceChildren(td1,td2,td3,td4,td5)
     
   }
+  
+  function optionOnChange(selectedObject) {
+    if (selectedObject.value)
+      document.getElementById("new_exercise_name").value = selectedObject.value
+  }
 </script>
 
 <a href="/">Home</a> / edit-program
@@ -103,7 +108,14 @@
 
 <form action="/add-exercise" method="POST">
   <h3>Add new exercise</h3>
-  <input type="text" name="exercise_name" placeholder="exercise name">
+  <select onchange="optionOnChange(this)" placeholder="hello">
+    <option value="" selected disabled hidden>Presaved exercises</option>
+    <option value=""></option>
+    {% for template in templates %}
+    <option value="{{ template.name }}">{{ template.name }}</option>
+    {% endfor %}
+  </select><br>
+  <input type="text"  name="exercise_name" placeholder="exercise name" id="new_exercise_name">
   <input type="number" name="exercise_sets" placeholder="number of sets">
   <input type="number" name="exercise_reps" placeholder="number of reps">
   <input type="number" name="program_id" value="{{ program_id }}" hidden>

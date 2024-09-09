@@ -121,9 +121,14 @@ def edit_program(id):
         {'id':id, 'user_id': session['user_id']}
     )
     exercises = result.fetchall()
+    result = db.session.execute(
+        text('SELECT id, name FROM templates WHERE user_id = :user_id OR user_id is NULL'),
+        {'id':id, 'user_id': session['user_id']}
+    )
+    templates = result.fetchall()
     if not program or len(program) < 1:
         return redirect('/')
-    return render_template('edit-program.html', program_name=program[1], program_id=id, exercises=exercises)
+    return render_template('edit-program.html', program_name=program[1], program_id=id, exercises=exercises, templates=templates)
 
 @app.route('/edit-program/<int:id>/edit')
 def edit_program_name(id):
