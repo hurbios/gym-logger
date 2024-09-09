@@ -125,6 +125,31 @@ def edit_program(id):
         return redirect('/')
     return render_template('edit-program.html', program_name=program[1], program_id=id, exercises=exercises)
 
+@app.route('/edit-program/<int:id>/edit')
+def edit_program_name(id):
+    if 'username' not in session:
+        return redirect('/')
+    result = db.session.execute(
+        text('SELECT id, name FROM programs WHERE id = :id AND user_id = :user_id'),
+        {'id':id, 'user_id': session['user_id']}
+    )
+    program = result.fetchone()
+    if not program or len(program) < 1:
+        return redirect('/')
+    return render_template('edit-program-name.html', program_name=program[1], program_id=id)
+
+@app.route('/edit-program/<int:id>/save', methods=['POST'])
+def save_program_name(id):
+    if 'username' not in session:
+        return redirect('/')
+    name = request.form['name']
+    db.session.execute(
+        text('UPDATE programs SET name=:name WHERE id = :id AND user_id = :user_id'),
+        {'name':name, 'id':id, 'user_id': session['user_id']}
+    )
+    db.session.commit()
+    return redirect('/edit-program/'+str(id))
+
 @app.route('/add-exercise', methods=['POST'])
 def add_exercise():
     if 'username' not in session:
