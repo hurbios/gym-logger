@@ -92,7 +92,7 @@ def edit_program_name(id):
 
     if request.method == "GET":
         program = programs.get_program(id)
-        if not program or len(program) < 1:
+        if not program or len(program) < 2:
             return redirect('/')
         return render_template('edit-program-name.html', program_name=program[1], program_id=id)
     else:
@@ -114,8 +114,7 @@ def add_exercise():
     reps = request.form['exercise_reps']
     program_id = request.form['program_id']
     # Validate that program belongs to the user.
-    program = programs.get_program(program_id)
-    if program:
+    if programs.get_program(program_id):
         exercises.add_exercise(name, sets, reps, program_id)
     return redirect('/edit-program/' + str(program_id))
 
@@ -139,8 +138,7 @@ def update_exercise(id):
     reps = request.form['exercise_reps']
     program_id = request.form['program_id']
     # Validate that program belongs to the user.
-    program = programs.get_program(program_id)
-    if program:
+    if programs.get_program(program_id):
         exercises.update_exercise(id, name, sets, reps, program_id)
     return redirect('/edit-program/' + str(program_id))
 
@@ -167,7 +165,6 @@ def save_result(id):
     if utils.check_csrf_token(request.form):
         return Response("Invalid CSRF token", 403)
     # validate that program belongs to the user.
-    program = programs.get_program(id)
-    if program:
+    if programs.get_program(id):
         results.add_result_set(id, request.form)
     return redirect('/results/'+str(id))

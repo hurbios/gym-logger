@@ -50,3 +50,4 @@ Run production version wiht `flask run` or run development version with `flask -
   - backend - TODO
 - Workout program Deletion - TODO
 - Dev setup - TODO
+- Add styling - TODO
