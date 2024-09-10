@@ -236,3 +236,83 @@ def update_exercise(id):
         )
         db.session.commit()
     return redirect('/edit-program/' + str(program_id))
+
+#### RESULTS ####
+@app.route('/results/<int:id>')
+def results(id):
+    if 'username' not in session:
+        return redirect('/')
+
+    result = db.session.execute(
+        text(
+            """
+                SELECT rs.date, e.name, r.result, rs.id
+                FROM resultsets rs
+                LEFT JOIN results r on rs.id = r.resultset
+                LEFT JOIN exercises e on r.exercise_id = e.id
+                WHERE rs.program_id = :id AND rs.user_id = :user_id
+            """
+        ),
+        {'id':id, 'user_id': session['user_id']}
+    )
+    results = result.fetchall()
+    return render_template('results.html', results=results, program_id=id)
+
+@app.route('/results/<int:id>/add')
+def add_result(id):
+    if 'username' not in session:
+        return redirect('/')
+    result = db.session.execute(
+        text('SELECT id, name FROM programs WHERE id = :id AND user_id = :user_id'),
+        {'id':id, 'user_id': session['user_id']}
+    )
+    program = result.fetchone()
+    result = db.session.execute(
+        text('SELECT id, name, sets, reps FROM exercises WHERE program_id = :id AND user_id = :user_id'),
+        {'id':id, 'user_id': session['user_id']}
+    )
+    exercises = result.fetchall()
+    return render_template('add-result.html', program=program, exercises=exercises)
+
+@app.route('/results/<int:id>/save', methods=["POST"])
+def save_result(id):
+    if 'username' not in session:
+        return redirect('/')
+    print(request.form)
+
+    # validate that program belongs to the user.
+    # If not just redirect back to program without deleting.
+    result = db.session.execute(
+        text('SELECT id, name FROM programs WHERE id = :id AND user_id = :user_id'),
+        {'id':id, 'user_id': session['user_id']}
+    )
+    program = result.fetchone()
+    if program:
+        result = db.session.execute(
+                text('INSERT INTO resultsets (program_id, user_id, date) \
+                    VALUES (:program_id, :user_id, :date) \
+                    RETURNING id'),
+                {
+                    'program_id': id,
+                    'user_id': session['user_id'],
+                    'date': '2022-01-01'
+                }
+            )
+        db.session.commit()
+        resultset_id = result.fetchone()[0]
+        for exercise in request.form:
+            if exercise.isnumeric() and request.form[exercise].isnumeric():
+                db.session.execute(
+                        text('INSERT INTO results (resultset, exercise_id, result) \
+                            VALUES (:resultset, :exercise_id, :result) \
+                            RETURNING id'),
+                        {
+                            'resultset': resultset_id,
+                            'exercise_id': int(exercise),
+                            'result': int(request.form[exercise])
+                        }
+                    )
+                db.session.commit()
+
+    
+    return redirect('/results/'+str(id))

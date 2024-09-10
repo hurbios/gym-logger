@@ -107,7 +107,7 @@
 
 <form action="/add-exercise" method="POST">
   <h3>Add new exercise</h3>
-  <select onchange="optionOnChange(this)" placeholder="hello">
+  <select id="template_select" onchange="optionOnChange(this)" placeholder="hello">
     <option value="" selected disabled hidden>Presaved exercises</option>
     <option value=""></option>
     {% for template in templates %}

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<a href="/">Home</a> / <a href="/edit-program/{{ program.id }}">edit-program</a> / edit-program-name
+<form action="/results/{{ program.id }}/save" method="POST" id="result">
+  <h1>Add a new result</h1>
+  <ul>
+    {% for exercise in exercises %}
+      <li>
+        <label for="{{ exercise.id }}">{{ exercise.name }}</label>
+        <input type="number" id="{{ exercise.id }}" name="{{ exercise.id }}" rows="1" cols="30"></input>
+      </li>
+    {% endfor %}
+  </ul>
+  <p>
+  <input type="submit" value="Save">
+</form>

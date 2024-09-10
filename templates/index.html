@@ -13,10 +13,10 @@
 
 <ul>
   {% for program in programs %}
-  {% set url = "/edit-program/" + program[0]|string %}
+  {% set results_url = "/results/" + program[0]|string %}
+  {% set edit_url = "/edit-program/" + program[0]|string %}
   
-
-  <li> {{ program[1] }} <a href= "{{ url }}">edit</a>
+  <li> {{ program[1] }} <a href= "{{ results_url }}">results</a> <a href= "{{ edit_url }}">edit</a></li>
   {% endfor %}
 </ul>
 {% else %}

@@ -3,7 +3,7 @@
 <form action="/edit-program/{{ program_id }}/save" method="POST" id="programData">
   <h1>Change program name</h1>
   <label for="name">Name of the workout program:</label>
-  <input type="text" name="name" rows="1" cols="30" value="{{ program_name }}"></input>
+  <input type="text" id="name" name="name" rows="1" cols="30" value="{{ program_name }}"></input>
   <p>
   <input type="submit" value="Save">
 </form>

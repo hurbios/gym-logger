@@ -4,6 +4,8 @@ from werkzeug.security import generate_password_hash
 def init_database(db):
     sql = """
         DROP TABLE IF EXISTS templates;
+        DROP TABLE IF EXISTS results;
+        DROP TABLE IF EXISTS resultsets;
         DROP TABLE IF EXISTS exercises;
         DROP TABLE IF EXISTS programs;
         DROP TABLE IF EXISTS users;
@@ -26,6 +28,20 @@ def init_database(db):
             reps INTEGER,
             program_id INTEGER REFERENCES programs,
             user_id INTEGER REFERENCES users
+        );
+
+        CREATE TABLE resultsets (
+            id SERIAL PRIMARY KEY,
+            program_id INTEGER REFERENCES programs,
+            user_id INTEGER REFERENCES users,
+            date DATE
+        );
+
+        CREATE TABLE results (
+            id SERIAL PRIMARY KEY,
+            exercise_id INTEGER REFERENCES exercises,
+            resultset INTEGER REFERENCES resultsets,
+            result INTEGER
         );
 
         CREATE TABLE templates (

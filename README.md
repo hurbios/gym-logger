@@ -41,7 +41,7 @@ Run production version wiht `flask run` or run development version with `flask -
 - add pylint - Done
 - Workout program name edition - Done
 - Add selectable exercise templates - Done
-- Add possiblity to add results - TODO
+- Add possiblity to add results - Done
 - Disable workout program edition if results entered - TODO
 - Input validations
   - frontend - TODO

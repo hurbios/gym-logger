@@ -22,7 +22,15 @@ CREATE TABLE exercises (
 CREATE TABLE results (
   id SERIAL PRIMARY KEY,
   exercise_id INTEGER REFERENCES exercises,
-  result INTEGER
+  resultset INTEGER REFERENCES resultsets,
+  result INTEGER,
+);
+
+CREATE TABLE resultsets (
+  id SERIAL PRIMARY KEY,
+  program_id INTEGER REFERENCES programs,
+  user_id INTEGER REFERENCES users,
+  date DATE
 );
 
 CREATE TABLE templates (
