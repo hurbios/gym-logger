@@ -7,6 +7,7 @@ import programs
 import users
 import exercises
 import results
+import utils
 
 env = getenv('FLASK_ENV')
 
@@ -47,6 +48,7 @@ def register():
     if request.method == "GET":
         return render_template('register.html')
     else:
+        # TODO CSRF?
         username = request.form['username']
         password = request.form['password']
         users.register(username, password)
@@ -60,6 +62,8 @@ def create_program():
     if request.method == "GET":
         return render_template('create-new-program.html')
     else:
+        if utils.check_csrf_token(request.form):
+            return Response("Invalid CSRF token", 403)
         name = request.form['programName']
         program_id = programs.create_program(name)
         return redirect('/edit-program/'+str(program_id))
@@ -92,6 +96,8 @@ def edit_program_name(id):
             return redirect('/')
         return render_template('edit-program-name.html', program_name=program[1], program_id=id)
     else:
+        if utils.check_csrf_token(request.form):
+            return Response("Invalid CSRF token", 403)
         name = request.form['name']
         programs.change_program_name(id, name)
         return redirect('/edit-program/'+str(id))   
@@ -101,6 +107,8 @@ def edit_program_name(id):
 def add_exercise():
     if 'username' not in session:
         return redirect('/')
+    if utils.check_csrf_token(request.form):
+        return Response("Invalid CSRF token", 403)
     name = request.form['exercise_name']
     sets = request.form['exercise_sets']
     reps = request.form['exercise_reps']
@@ -115,6 +123,8 @@ def add_exercise():
 def remove_exercise(id):
     if 'username' not in session:
         return redirect('/')
+    if utils.check_csrf_token(request.form):
+        return Response("Invalid CSRF token", 403)
     exercises.delete_exercise(id)
     return Response('', 204)
 
@@ -122,6 +132,8 @@ def remove_exercise(id):
 def update_exercise(id):
     if 'username' not in session:
         return redirect('/')
+    if utils.check_csrf_token(request.form):
+        return Response("Invalid CSRF token", 403)
     name = request.form['exercise_name']
     sets = request.form['exercise_sets']
     reps = request.form['exercise_reps']
@@ -152,6 +164,8 @@ def add_result(id):
 def save_result(id):
     if 'username' not in session:
         return redirect('/')
+    if utils.check_csrf_token(request.form):
+        return Response("Invalid CSRF token", 403)
     # validate that program belongs to the user.
     program = programs.get_program(id)
     if program:

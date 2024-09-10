@@ -43,10 +43,10 @@ Run production version wiht `flask run` or run development version with `flask -
 - Add selectable exercise templates - Done
 - Add possiblity to add results - Done
 - Refactor to separate modules - Done
+- Add CSRF protection - Done
 - Disable workout program edition if results entered - TODO
 - Input validations
   - frontend - TODO
   - backend - TODO
 - Workout program Deletion - TODO
 - Dev setup - TODO
-- add CSRF protection -TODO
