@@ -1,7 +1,8 @@
 from sqlalchemy.sql import text
 from werkzeug.security import generate_password_hash
+from db import db
 
-def init_database(db):
+def init_database():
     sql = """
         DROP TABLE IF EXISTS templates;
         DROP TABLE IF EXISTS results;
@@ -53,7 +54,7 @@ def init_database(db):
     db.session.execute(text(sql))
     db.session.commit()
 
-def add_test_data(db):
+def add_test_data():
     hash1 = generate_password_hash('test', method="pbkdf2")
     hash2 = generate_password_hash('asdf', method="pbkdf2")
     sql = """

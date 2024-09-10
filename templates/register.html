@@ -4,7 +4,7 @@
 <p>You are logged in as {{ session.username }}</p>
 <a href="/logout">Logout</a>
 {% else %}
-<form action="/api/create-user" method="POST">
+<form action="/register" method="POST">
 <p>Username:<br>
 <input type="text" name="username"></p>
 <p>Password:<br>

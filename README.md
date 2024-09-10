@@ -42,6 +42,7 @@ Run production version wiht `flask run` or run development version with `flask -
 - Workout program name edition - Done
 - Add selectable exercise templates - Done
 - Add possiblity to add results - Done
+- Refactor to separate modules - Done
 - Disable workout program edition if results entered - TODO
 - Input validations
   - frontend - TODO
