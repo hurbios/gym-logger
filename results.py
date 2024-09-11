@@ -50,3 +50,16 @@ def add_result_set(id, exercise_list):
         db.session.commit()
     else:
         db.session.rollback()
+
+def program_has_results(program_id):
+    result = db.session.execute(
+        text(
+            """
+                SELECT COUNT(id)
+                FROM resultsets
+                WHERE program_id = :program_id AND user_id = :user_id
+            """
+        ),
+        {'program_id':program_id, 'user_id': session['user_id']}
+    )
+    return result.fetchone()[0] > 0

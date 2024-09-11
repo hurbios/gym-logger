@@ -63,3 +63,10 @@ def update_exercise(id, name, sets, reps, program_id):
         }
     )
     db.session.commit()
+
+def get_program_id_with_exercise_id(id):
+    result = db.session.execute(
+        text('SELECT program_id FROM exercises WHERE id = :id AND user_id = :user_id'),
+        {'id':id, 'user_id': session['user_id']}
+    )
+    return result.fetchone()[0]

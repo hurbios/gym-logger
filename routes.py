@@ -77,12 +77,14 @@ def edit_program(id):
         return redirect('/')
     program_exercises = exercises.get_program_exercises(id)
     templates = exercises.get_exercise_templates(id)
+    has_results = results.program_has_results(id)
     return render_template(
         'edit-program.html',
         program_name=program[1],
         program_id=id,
         exercises=program_exercises,
-        templates=templates
+        templates=templates,
+        has_results=has_results
     )
 
 @app.route('/edit-program/<int:id>/edit', methods=["GET","POST"])
@@ -114,7 +116,7 @@ def add_exercise():
     reps = request.form.get('exercise_reps')
     program_id = request.form.get('program_id')
     # Validate that program belongs to the user.
-    if programs.get_program(program_id):
+    if programs.get_program(program_id) and not results.program_has_results(program_id):
         exercises.add_exercise(name, sets, reps, program_id)
     return redirect('/edit-program/' + str(program_id))
 
@@ -124,6 +126,8 @@ def remove_exercise(id):
         return redirect('/')
     if utils.check_csrf_token(request.form):
         return Response("Invalid CSRF token", 403)
+    if results.program_has_results(exercises.get_program_id_with_exercise_id(id)):
+        return Response('Program with results cannot be edited', 400)
     exercises.delete_exercise(id)
     return Response('', 204)
 
@@ -138,7 +142,7 @@ def update_exercise(id):
     reps = request.form.get('exercise_reps')
     program_id = request.form.get('program_id')
     # Validate that program belongs to the user.
-    if programs.get_program(program_id):
+    if programs.get_program(program_id) and not results.program_has_results(program_id):
         exercises.update_exercise(id, name, sets, reps, program_id)
     return redirect('/edit-program/' + str(program_id))
 

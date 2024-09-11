@@ -43,6 +43,13 @@
     }
   }
 
+  function disableInputs() {
+    const inputs = document.getElementsByClassName("input")
+    for (key in inputs){
+      inputs[key].disabled = true
+    }
+  }
+
   function createTableColumn(type, attribute, attributeText, inputType, name, value, onClickHandler, innerText) {
     const element = document.createElement(type)
     element.setAttribute(attribute, attributeText)
@@ -78,11 +85,20 @@
     if (selectedObject.value)
       document.getElementById("new_exercise_name").value = selectedObject.value
   }
+
+  window.onload = function() {
+    if ("{{ has_results }}" === "True") {
+      disableButtons()
+      disableInputs()
+      document.getElementById("program-disbled-notification").hidden = false
+    }
+  }
 </script>
 
 <a href="/">Home</a> / edit-program
 <h1>{{ program_name }} <small>(<a href="/edit-program/{{ program_id }}/edit">edit</a>)</small></h1>
 <i>Here you can edit your workout program.</i>
+<h3 id="program-disbled-notification" hidden>Program exercises cannot be edited because it has results.</h3>
 <p></p>
 <form id="exercise-row-form" method="POST"></form>
 <input type="number" name="program_id" value="{{ program_id }}" form="exercise-row-form" hidden>
@@ -108,17 +124,17 @@
 
 <form action="/add-exercise" method="POST">
   <h3>Add new exercise</h3>
-  <select id="template_select" onchange="optionOnChange(this)" placeholder="hello">
+  <select id="template_select" onchange="optionOnChange(this)" placeholder="hello" class="input">
     <option value="" selected disabled hidden>Presaved exercises</option>
     <option value=""></option>
     {% for template in templates %}
     <option value="{{ template.name }}">{{ template.name }}</option>
     {% endfor %}
   </select><br>
-  <input type="text"  name="exercise_name" placeholder="exercise name" id="new_exercise_name">
-  <input type="number" name="exercise_sets" placeholder="number of sets">
-  <input type="number" name="exercise_reps" placeholder="number of reps">
-  <input type="number" name="program_id" value="{{ program_id }}" hidden>
+  <input type="text"  name="exercise_name" class="input" placeholder="exercise name" id="new_exercise_name">
+  <input type="number" name="exercise_sets" class="input" placeholder="number of sets">
+  <input type="number" name="exercise_reps" class="input" placeholder="number of reps">
+  <input type="number" name="program_id" class="input" value="{{ program_id }}" hidden>
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
   <button type="send" class="submit button">Add</button>
 </form>

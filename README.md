@@ -44,7 +44,7 @@ Run production version wiht `flask run` or run development version with `flask -
 - Add possiblity to add results - Done
 - Refactor to separate modules - Done
 - Add CSRF protection - Done
-- Disable workout program edition if results entered - TODO
+- Disable workout program edition if results entered - Done
 - Input validations
   - frontend - TODO
   - backend - TODO
