@@ -31,8 +31,8 @@ def index():
 #### USER ROUTES ####
 @app.route('/login', methods=['POST'])
 def login():
-    username = request.form['username']
-    password = request.form['password']
+    username = request.form.get('username')
+    password = request.form.get('password')
     users.login(username, password)
     return redirect('/')
 
@@ -49,8 +49,8 @@ def register():
         return render_template('register.html')
     else:
         # TODO CSRF?
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get('username')
+        password = request.form.get('password')
         users.register(username, password)
         return redirect('/')
 
@@ -64,7 +64,7 @@ def create_program():
     else:
         if utils.check_csrf_token(request.form):
             return Response("Invalid CSRF token", 403)
-        name = request.form['programName']
+        name = request.form.get('programName')
         program_id = programs.create_program(name)
         return redirect('/edit-program/'+str(program_id))
 
@@ -98,7 +98,7 @@ def edit_program_name(id):
     else:
         if utils.check_csrf_token(request.form):
             return Response("Invalid CSRF token", 403)
-        name = request.form['name']
+        name = request.form.get('name')
         programs.change_program_name(id, name)
         return redirect('/edit-program/'+str(id))   
 
@@ -109,10 +109,10 @@ def add_exercise():
         return redirect('/')
     if utils.check_csrf_token(request.form):
         return Response("Invalid CSRF token", 403)
-    name = request.form['exercise_name']
-    sets = request.form['exercise_sets']
-    reps = request.form['exercise_reps']
-    program_id = request.form['program_id']
+    name = request.form.get('exercise_name')
+    sets = request.form.get('exercise_sets')
+    reps = request.form.get('exercise_reps')
+    program_id = request.form.get('program_id')
     # Validate that program belongs to the user.
     if programs.get_program(program_id):
         exercises.add_exercise(name, sets, reps, program_id)
@@ -133,10 +133,10 @@ def update_exercise(id):
         return redirect('/')
     if utils.check_csrf_token(request.form):
         return Response("Invalid CSRF token", 403)
-    name = request.form['exercise_name']
-    sets = request.form['exercise_sets']
-    reps = request.form['exercise_reps']
-    program_id = request.form['program_id']
+    name = request.form.get('exercise_name')
+    sets = request.form.get('exercise_sets')
+    reps = request.form.get('exercise_reps')
+    program_id = request.form.get('program_id')
     # Validate that program belongs to the user.
     if programs.get_program(program_id):
         exercises.update_exercise(id, name, sets, reps, program_id)

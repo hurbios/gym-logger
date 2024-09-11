@@ -20,28 +20,33 @@ def get_results(program_id):
 
 
 def add_result_set(id, exercise_list):
+    if not exercise_list or len(exercise_list) < 1:
+        return
+    should_commit = False
     result = db.session.execute(
             text('INSERT INTO resultsets (program_id, user_id, date) \
                 VALUES (:program_id, :user_id, :date) \
-                RETURNING id'),
+                RETURNING id;'),
             {
                 'program_id': id,
                 'user_id': session['user_id'],
                 'date': '2022-01-01'
             }
         )
-    db.session.commit()
     resultset_id = result.fetchone()[0]
     for exercise in exercise_list:
         if exercise.isnumeric() and exercise_list[exercise].isnumeric():
+            should_commit = True
             db.session.execute(
-                    text('INSERT INTO results (resultset, exercise_id, result) \
-                        VALUES (:resultset, :exercise_id, :result) \
-                        RETURNING id'),
-                    {
-                        'resultset': resultset_id,
-                        'exercise_id': int(exercise),
-                        'result': int(exercise_list[exercise])
-                    }
-                )
-            db.session.commit()
+                text('INSERT INTO results (resultset, exercise_id, result) \
+                    VALUES (:resultset, :exercise_id, :result);'),
+                {
+                    'resultset': resultset_id,
+                    'exercise_id': int(exercise),
+                    'result': int(exercise_list[exercise])
+                }
+            )
+    if should_commit:
+        db.session.commit()
+    else:
+        db.session.rollback()
