@@ -33,6 +33,8 @@ def index():
 def login():
     username = request.form.get('username')
     password = request.form.get('password')
+    if not utils.validate_all([username, password]):
+        return Response('Incorrect input', 400)
     users.login(username, password)
     return redirect('/')
 
@@ -41,30 +43,32 @@ def logout():
     users.logout()
     return redirect('/')
 
-@app.route('/register', methods=["GET", "POST"])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     if 'username' in session:
         return redirect('/')
-    if request.method == "GET":
+    if request.method == 'GET':
         return render_template('register.html')
     else:
         # TODO CSRF?
         username = request.form.get('username')
         password = request.form.get('password')
+        if not utils.validate_all([username, password]):
+            return Response('Incorrect input', 400)
         users.register(username, password)
         return redirect('/')
 
 #### PROGRAM ENDPOINTS ####
-@app.route('/create-program', methods=["GET", "POST"])
+@app.route('/create-program', methods=['GET', 'POST'])
 def create_program():
     if 'username' not in session:
         return redirect('/')
-    if request.method == "GET":
+    if request.method == 'GET':
         return render_template('create-new-program.html')
     else:
         if utils.check_csrf_token(request.form):
-            return Response("Invalid CSRF token", 403)
-        name = request.form.get('programName')
+            return Response('Invalid CSRF token', 403)
+        name = utils.validate(request.form.get('programName'), 'string')
         program_id = programs.create_program(name)
         return redirect('/edit-program/'+str(program_id))
 
@@ -72,6 +76,8 @@ def create_program():
 def edit_program(id):
     if 'username' not in session:
         return redirect('/')
+    if not utils.validate(id, 'number'):
+        return Response('Incorrect program ID', 400)
     program = programs.get_program(id)
     if not program or len(program) < 1:
         return redirect('/')
@@ -87,19 +93,20 @@ def edit_program(id):
         has_results=has_results
     )
 
-@app.route('/edit-program/<int:id>/edit', methods=["GET","POST"])
+@app.route('/edit-program/<int:id>/edit', methods=['GET', 'POST'])
 def edit_program_name(id):
     if 'username' not in session:
         return redirect('/')
-
-    if request.method == "GET":
+    if not utils.validate(id, 'number'):
+        return Response('Incorrect program ID', 400)
+    if request.method == 'GET':
         program = programs.get_program(id)
         if not program or len(program) < 2:
             return redirect('/')
         return render_template('edit-program-name.html', program_name=program[1], program_id=id)
     else:
         if utils.check_csrf_token(request.form):
-            return Response("Invalid CSRF token", 403)
+            return Response('Invalid CSRF token', 403)
         name = request.form.get('name')
         programs.change_program_name(id, name)
         return redirect('/edit-program/'+str(id))   
@@ -110,11 +117,13 @@ def add_exercise():
     if 'username' not in session:
         return redirect('/')
     if utils.check_csrf_token(request.form):
-        return Response("Invalid CSRF token", 403)
+        return Response('Invalid CSRF token', 403)
     name = request.form.get('exercise_name')
     sets = request.form.get('exercise_sets')
     reps = request.form.get('exercise_reps')
     program_id = request.form.get('program_id')
+    if not utils.validate_all([name], [sets, reps, program_id]):
+        return Response('Incorrect input', 400)
     # Validate that program belongs to the user.
     if programs.get_program(program_id) and not results.program_has_results(program_id):
         exercises.add_exercise(name, sets, reps, program_id)
@@ -125,7 +134,9 @@ def remove_exercise(id):
     if 'username' not in session:
         return redirect('/')
     if utils.check_csrf_token(request.form):
-        return Response("Invalid CSRF token", 403)
+        return Response('Invalid CSRF token', 403)
+    if not utils.validate(id, 'number'):
+        return Response('Incorrect program ID', 400)
     if results.program_has_results(exercises.get_program_id_with_exercise_id(id)):
         return Response('Program with results cannot be edited', 400)
     exercises.delete_exercise(id)
@@ -136,11 +147,13 @@ def update_exercise(id):
     if 'username' not in session:
         return redirect('/')
     if utils.check_csrf_token(request.form):
-        return Response("Invalid CSRF token", 403)
+        return Response('Invalid CSRF token', 403)
     name = request.form.get('exercise_name')
     sets = request.form.get('exercise_sets')
     reps = request.form.get('exercise_reps')
     program_id = request.form.get('program_id')
+    if not utils.validate_all([name], [sets, reps, program_id, id]):
+        return Response('Incorrect input', 400)
     # Validate that program belongs to the user.
     if programs.get_program(program_id) and not results.program_has_results(program_id):
         exercises.update_exercise(id, name, sets, reps, program_id)
@@ -151,6 +164,8 @@ def update_exercise(id):
 def show_results(id):
     if 'username' not in session:
         return redirect('/')
+    if not utils.validate(id, 'number'):
+        return Response('Incorrect program ID', 400)
     results_list = results.get_results(id)
     return render_template('results.html', results=results_list, program_id=id)
 
@@ -158,16 +173,20 @@ def show_results(id):
 def add_result(id):
     if 'username' not in session:
         return redirect('/')
+    if not utils.validate(id, 'number'):
+        return Response('Incorrect program ID', 400)
     program = programs.get_program(id)
     exercise_list = exercises.get_program_exercises(id)
     return render_template('add-result.html', program=program, exercises=exercise_list)
 
-@app.route('/results/<int:id>/save', methods=["POST"])
+@app.route('/results/<int:id>/save', methods=['POST'])
 def save_result(id):
     if 'username' not in session:
         return redirect('/')
     if utils.check_csrf_token(request.form):
-        return Response("Invalid CSRF token", 403)
+        return Response('Invalid CSRF token', 403)
+    if not utils.validate(id, 'number'):
+        return Response('Incorrect program ID', 400)
     # validate that program belongs to the user.
     if programs.get_program(id):
         results.add_result_set(id, request.form)

@@ -46,8 +46,8 @@ Run production version wiht `flask run` or run development version with `flask -
 - Add CSRF protection - Done
 - Disable workout program edition if results entered - Done
 - Input validations
+  - backend - Done
   - frontend - TODO
-  - backend - TODO
+- Add styling - TODO
 - Workout program Deletion - TODO
 - Dev setup - TODO
-- Add styling - TODO
