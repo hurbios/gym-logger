@@ -48,6 +48,9 @@ Run production version wiht `flask run` or run development version with `flask -
 - Input validations
   - backend - Done
   - frontend - Done
+- Workout program Deletion - Done
+- Results frontend
+  - Make a table - TODO
+  - Add possibility to edit results - TODO
 - Add styling - TODO
-- Workout program Deletion - TODO
 - Dev setup - TODO

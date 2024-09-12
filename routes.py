@@ -67,7 +67,9 @@ def create_program():
     else:
         if utils.check_csrf_token(request.form):
             return Response('Invalid CSRF token', 403)
-        name = utils.validate(request.form.get('program_name'), 'string')
+        name = request.form.get('program_name')
+        if not utils.validate(name, 'string'):
+            return Response('Invalid name', 400)
         program_id = programs.create_program(name)
         return redirect('/edit-program/'+str(program_id))
 
