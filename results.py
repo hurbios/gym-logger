@@ -1,6 +1,7 @@
 from db import db
 from flask import session
 from sqlalchemy.sql import text
+import utils
 
 
 def get_results(program_id):
@@ -35,7 +36,7 @@ def add_result_set(id, exercise_list):
         )
     resultset_id = result.fetchone()[0]
     for exercise in exercise_list:
-        if exercise.isnumeric() and exercise_list[exercise].isnumeric():
+        if utils.validate_number_type(exercise) and utils.validate_number_type(exercise_list[exercise]):
             should_commit = True
             db.session.execute(
                 text('INSERT INTO results (resultset, exercise_id, result) \

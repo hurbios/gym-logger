@@ -3,11 +3,14 @@ from flask import session
 def check_csrf_token(form):
     return 'csrf_token' not in form or 'csrf_token' not in session or session['csrf_token'] != form['csrf_token']
 
-def validate(value, type):
-    if type == 'string':
-        return type(value) == 'string' and len(value) < 1000
-    if type == 'number':
-        return value.isnumeric() and 0 <= int(value) < 1000
+def validate_number_type(value):
+    return type(value) == int or (type(value) == str and value.isnumeric())
+
+def validate(value, validation_type):
+    if validation_type == 'string':
+        return type(value) == str and len(value) < 100
+    if validation_type == 'number':
+        return validate_number_type(value) and 0 <= int(value) < 1000
     
 def validate_all(strings=[], numbers=[]):
     for string in strings:
