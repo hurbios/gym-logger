@@ -64,3 +64,30 @@ def program_has_results(program_id):
         {'program_id':program_id, 'user_id': session['user_id']}
     )
     return result.fetchone()[0] > 0
+
+def delete_program_results(program_id):
+    db.session.execute(
+        text(
+            """
+                DELETE
+                FROM results r
+                WHERE r.resultset in (
+                    SELECT id 
+                    FROM resultsets 
+                    WHERE program_id = :program_id AND user_id = :user_id
+                )
+            """
+        ),
+        {'program_id':program_id, 'user_id': session['user_id']}
+    )
+    db.session.execute(
+        text(
+            """
+                DELETE
+                FROM resultsets 
+                WHERE program_id = :program_id AND user_id = :user_id
+            """
+        ),
+        {'program_id':program_id, 'user_id': session['user_id']}
+    )
+    db.session.commit()

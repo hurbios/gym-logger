@@ -20,6 +20,26 @@
     }
   }
 
+  function onDeleteProgramButtonClick(id) {
+    if (id) {
+      if (confirm("Are you sure you want to delete the program, its exercises and all results entered to that program?")) {
+        const xhr = new XMLHttpRequest()
+        xhr.open("DELETE", "/delete_program/" + id.toString() + "?csrf_token={{ session.csrf_token }}")
+        xhr.onload = function () {
+          if (xhr.status === 204 || xhr.status === 200) {
+            location.reload()
+          } else {
+            alert("Program deletion failed.")
+          }
+        }
+        xhr.onerror = function() {
+          alert("Program deletion failed.")
+        }
+        xhr.send()
+      }
+    }
+  }
+
   function disableButtons() {
     const buttons = document.getElementsByClassName("button")
     for (key in buttons){
@@ -154,3 +174,6 @@
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
   <button type="send" class="submit button">Adds</button>
 </form>
+
+<p>
+<button onclick="onDeleteProgramButtonClick({{ program_id }})">Delete program</button>

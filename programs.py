@@ -1,6 +1,8 @@
 from db import db
 from flask import session
 from sqlalchemy.sql import text
+import exercises
+import results
 
 def get_programs():
     result = db.session.execute(
@@ -29,5 +31,20 @@ def change_program_name(id, name):
     db.session.execute(
         text('UPDATE programs SET name=:name WHERE id = :id AND user_id = :user_id'),
         {'name':name, 'id':id, 'user_id': session['user_id']}
+    )
+    db.session.commit()
+
+def delete_program(id):
+    results.delete_program_results(id)
+    exercises.delete_program_exercises(id)
+    db.session.execute(
+        text(
+            """
+                DELETE
+                FROM programs 
+                WHERE id = :id AND user_id = :user_id
+            """
+        ),
+        {'id':id, 'user_id': session['user_id']}
     )
     db.session.commit()

@@ -110,6 +110,19 @@ def edit_program_name(id):
         programs.change_program_name(id, name)
         return redirect('/edit-program/'+str(id))   
 
+@app.route('/delete_program/<int:id>', methods=['DELETE'])
+def remove_program(id):
+    if 'username' not in session:
+        return redirect('/')
+    if utils.check_csrf_token(request.args):
+        return Response('Invalid CSRF token', 403)
+    if not utils.validate(id, 'number'):
+        return Response('Incorrect program ID', 400)
+    if not programs.get_program(id):
+        return Response('Program with results cannot be edited', 400)
+    programs.delete_program(id)
+    return Response('', 204)
+
 #### EXERCISE ENDPOINTS ####
 @app.route('/add-exercise', methods=['POST'])
 def add_exercise():

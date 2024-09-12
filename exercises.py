@@ -70,3 +70,16 @@ def get_program_id_with_exercise_id(id):
         {'id':id, 'user_id': session['user_id']}
     )
     return result.fetchone()[0]
+
+def delete_program_exercises(program_id):
+    db.session.execute(
+        text(
+            """
+                DELETE
+                FROM exercises 
+                WHERE program_id = :program_id AND user_id = :user_id
+            """
+        ),
+        {'program_id':program_id, 'user_id': session['user_id']}
+    )
+    db.session.commit()
