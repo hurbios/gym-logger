@@ -1,14 +1,41 @@
 <!DOCTYPE html>
+
+<script>
+  function validateText(name, value) {
+    if (typeof value !== "string" || value.length > 100) {
+      alert(`${name} has to be a string shorter than 100 characters`)
+      return false
+    }
+    return true
+  }
+
+  function validatePasswordMatch(pw1, pw2) {
+    if (pw1 !== pw2) {
+      alert("Passwords need to match")
+      return false
+    }
+    return true
+  }
+
+  function validateForm(form) {
+    return validateText("username", form.username.value)
+      && validateText("password", form.password.value)
+      && validatePasswordMatch(form.password.value, form.password2.value)
+  }
+</script>
+
 <a href="/">Home</a> / create-user
 {% if session.username %}
 <p>You are logged in as {{ session.username }}</p>
 <a href="/logout">Logout</a>
 {% else %}
-<form action="/register" method="POST">
-  <p>Username:<br>
+<form action="/register" method="POST" onsubmit="return validateForm(this)">
+  <label for="username">Username:</label>
   <input type="text" name="username"></p>
-  <p>Password:<br>
+  <label for="password">Password:</label>
   <input type="password" name="password"></p>
+  <label for="password2">Retype password:</label>
+  <input type="password" name="password2"></p>
   <input type="submit" value="Create user">
 </form>
 {% endif %}

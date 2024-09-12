@@ -4,28 +4,12 @@
     if (id) {
       if (confirm("Are you sure you want to delete the exercise?")) {
         const xhr = new XMLHttpRequest()
-        xhr.open("DELETE", "/delete_exercise/" + id.toString())
+        xhr.open("DELETE", "/delete_exercise/" + id.toString() + "?csrf_token={{ session.csrf_token }}")
         xhr.onload = function () {
           if (xhr.status === 204 || xhr.status === 200) {
             location.reload()
-          }
-        }
-        xhr.onerror = function() {
-          alert("Exercise deletion failed.")
-        }
-        xhr.send()
-      }
-    }
-  }
-
-  function onSaveButtonClick(id) {
-    if (id) {
-      if (confirm("Are you sure you want to delete the exercise?")) {
-        const xhr = new XMLHttpRequest()
-        xhr.open("PUT", "/update-exercise/" + id.toString())
-        xhr.onload = function () {
-          if (xhr.status === 204 || xhr.status === 200) {
-            location.reload()
+          } else {
+            alert("Exercise deletion failed.")
           }
         }
         xhr.onerror = function() {
@@ -50,16 +34,17 @@
     }
   }
 
-  function createTableColumn(type, attribute, attributeText, inputType, name, value, onClickHandler, innerText) {
+  function createTableColumn(type, attribute, attributeText, inputType, name, value, onClickHandler, innerText, min, max) {
     const element = document.createElement(type)
     element.setAttribute(attribute, attributeText)
-    element.setAttribute("form", "exercise-row-form")
     element.setAttribute("form", "exercise-row-form")
     if (inputType) element.setAttribute("type", inputType)
     if (name) element.setAttribute("name", name)
     if (value) element.value = value
     if (onClickHandler) element.onclick=onClickHandler
     if (innerText) element.innerText=innerText
+    if (max) element.setAttribute("min", min)
+    if (max) element.setAttribute("max", max)
 
     const td = document.createElement("td")
     td.appendChild(element)
@@ -73,8 +58,8 @@
     const form = document.getElementById("exercise-row-form")
     form.setAttribute("action", "/update-exercise/" + id.toString())
     const td1 = createTableColumn("input", "placeholder", "exercise name", "text", "exercise_name", document.getElementById(`exercise-${id}-name`).getAttribute("data"))
-    const td2 = createTableColumn("input", "placeholder", "number of sets", "number", "exercise_sets", document.getElementById(`exercise-${id}-sets`).getAttribute("data"))
-    const td3 = createTableColumn("input", "placeholder", "number of reps", "number", "exercise_reps", document.getElementById(`exercise-${id}-reps`).getAttribute("data"))
+    const td2 = createTableColumn("input", "placeholder", "number of sets", "number", "exercise_sets", document.getElementById(`exercise-${id}-sets`).getAttribute("data"), null, null, "0", "999")
+    const td3 = createTableColumn("input", "placeholder", "number of reps", "number", "exercise_reps", document.getElementById(`exercise-${id}-reps`).getAttribute("data"), null, null, "0", "999")
     const td4 = createTableColumn("button", "type", "submit", null, null, null, null, "save")
     const td5 = createTableColumn("button", "type", "button", null, null, null, (e) => location.reload(), "cancel")
     row.replaceChildren(td1,td2,td3,td4,td5)
@@ -84,6 +69,37 @@
   function optionOnChange(selectedObject) {
     if (selectedObject.value)
       document.getElementById("new_exercise_name").value = selectedObject.value
+  }
+
+  function validateNumber(name, value) {
+    if ((typeof value !== "number" && (typeof value === 'string' && isNaN(value))) 
+      || 0 > (typeof value === 'string' ? parseInt(value) : value)
+      || (typeof value === 'string' ? parseInt(value) : value) >= 1000
+    ){
+      alert(`${name} with value ${value} has to be a number in range 0-999`)
+      return false
+    }
+    return true
+  }
+
+  function validateText(name, value) {
+    if (typeof value !== "string" || value.length > 100) {
+      alert(`${name} has to be a string shorter than 100 characters`)
+      return false
+    }
+    return true
+  }
+
+  function validateEditExerciseForm(form) {
+    return validateText("Name", form.exercise_name.value)
+      && validateNumber("Sets", form.exercise_sets.value)
+      && validateNumber("Reps", form.exercise_reps.value)
+  }
+
+  function validateNewExerciseForm(form) {
+    return validateText("Name", form.exercise_name.value)
+      && validateNumber("Sets", form.exercise_sets.value)
+      && validateNumber("Reps", form.exercise_reps.value)
   }
 
   window.onload = function() {
@@ -100,7 +116,7 @@
 <i>Here you can edit your workout program.</i>
 <h3 id="program-disbled-notification" hidden>Program exercises cannot be edited because it has results.</h3>
 <p></p>
-<form id="exercise-row-form" method="POST"></form>
+<form id="exercise-row-form" method="POST" onsubmit="return validateEditExerciseForm(this)"></form>
 <input type="number" name="program_id" value="{{ program_id }}" form="exercise-row-form" hidden>
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" form="exercise-row-form">
 <table>
@@ -122,7 +138,7 @@
   {% endfor %}
 </table>
 
-<form action="/add-exercise" method="POST">
+<form action="/add-exercise" method="POST" onsubmit="return validateNewExerciseForm(this)">
   <h3>Add new exercise</h3>
   <select id="template_select" onchange="optionOnChange(this)" placeholder="hello" class="input">
     <option value="" selected disabled hidden>Presaved exercises</option>
@@ -132,9 +148,9 @@
     {% endfor %}
   </select><br>
   <input type="text"  name="exercise_name" class="input" placeholder="exercise name" id="new_exercise_name">
-  <input type="number" name="exercise_sets" class="input" placeholder="number of sets">
-  <input type="number" name="exercise_reps" class="input" placeholder="number of reps">
+  <input type="number" name="exercise_sets" class="input" placeholder="number of sets" min="0" max="999">
+  <input type="number" name="exercise_reps" class="input" placeholder="number of reps" min="0" max="999">
   <input type="number" name="program_id" class="input" value="{{ program_id }}" hidden>
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-  <button type="send" class="submit button">Add</button>
+  <button type="send" class="submit button">Adds</button>
 </form>

@@ -50,7 +50,6 @@ def register():
     if request.method == 'GET':
         return render_template('register.html')
     else:
-        # TODO CSRF?
         username = request.form.get('username')
         password = request.form.get('password')
         if not utils.validate_all([username, password]):
@@ -68,7 +67,7 @@ def create_program():
     else:
         if utils.check_csrf_token(request.form):
             return Response('Invalid CSRF token', 403)
-        name = utils.validate(request.form.get('programName'), 'string')
+        name = utils.validate(request.form.get('program_name'), 'string')
         program_id = programs.create_program(name)
         return redirect('/edit-program/'+str(program_id))
 
@@ -133,7 +132,7 @@ def add_exercise():
 def remove_exercise(id):
     if 'username' not in session:
         return redirect('/')
-    if utils.check_csrf_token(request.form):
+    if utils.check_csrf_token(request.args):
         return Response('Invalid CSRF token', 403)
     if not utils.validate(id, 'number'):
         return Response('Incorrect program ID', 400)

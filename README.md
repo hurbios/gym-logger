@@ -47,7 +47,7 @@ Run production version wiht `flask run` or run development version with `flask -
 - Disable workout program edition if results entered - Done
 - Input validations
   - backend - Done
-  - frontend - TODO
+  - frontend - Done
 - Add styling - TODO
 - Workout program Deletion - TODO
 - Dev setup - TODO

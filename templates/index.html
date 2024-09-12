@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <script>
+  function validateText(name, value) {
+    if (typeof value !== "string" || value.length > 100) {
+      alert(`${name} has to be a string shorter than 100 characters`)
+      return false
+    }
+    return true
+  }
 
+  function validateForm(form) {
+    return validateText("username", form.username.value)
+      && validateText("password", form.password.value)
+  }
 </script>
 
 {% if session.username %}
@@ -20,10 +31,10 @@
   {% endfor %}
 </ul>
 {% else %}
-<form action="/login" method="POST">
-  <p>Tunnus:<br>
+<form action="/login" method="POST" onsubmit="return validateForm(this)">
+  <label for="username">Username:</label>
   <input type="text" name="username"></p>
-  <p>Salasana:<br>
+  <label for="password">Password:</label>
   <input type="password" name="password"></p>
   <input type="submit" value="Kirjaudu">
 </form>
