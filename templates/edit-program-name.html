@@ -1,5 +1,7 @@
-<!DOCTYPE html>
-
+{% extends "layout.html" %}
+{% block path %}<a href="/">Home</a> / <a href="/edit-program/{{ program_id }}">edit-program</a> / edit-program-name{% endblock %}
+{% block title %}Edit program name{% endblock %}
+{% block content %}
 <script>
   function validateText(name, value) {
     if (typeof value !== "string" || value.length > 100) {
@@ -14,7 +16,6 @@
   }
 </script>
 
-<a href="/">Home</a> / <a href="/edit-program/{{ program_id }}">edit-program</a> / edit-program-name
 <form action="/edit-program/{{ program_id }}/edit" method="POST" id="program_data" onsubmit="return validateForm(this)">
   <h1>Change program name</h1>
   <label for="name">Name of the workout program:</label>
@@ -23,3 +24,4 @@
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
   <input type="submit" value="Save">
 </form>
+{% endblock %}

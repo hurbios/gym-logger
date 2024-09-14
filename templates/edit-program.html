@@ -1,4 +1,7 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
+{% block path %}<a href="/">Home</a> / edit-program{% endblock %}
+{% block title %}Edit program{% endblock %}
+{% block content %}
 <script>
   function onDeleteButtonClick(id) {
     if (id) {
@@ -131,7 +134,6 @@
   }
 </script>
 
-<a href="/">Home</a> / edit-program
 <h1>{{ program_name }} <small>(<a href="/edit-program/{{ program_id }}/edit">edit</a>)</small></h1>
 <i>Here you can edit your workout program.</i>
 <h3 id="program-disbled-notification" hidden>Program exercises cannot be edited because it has results.</h3>
@@ -177,3 +179,4 @@
 
 <p>
 <button onclick="onDeleteProgramButtonClick({{ program_id }})">Delete program</button>
+{% endblock %}

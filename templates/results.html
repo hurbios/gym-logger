@@ -1,5 +1,7 @@
-<!DOCTYPE html>
-<a href="/">Home</a> / <a href="/edit-program/{{ program_id }}">edit-program</a> / edit-program-name <br>
+{% extends "layout.html" %}
+{% block path %}<a href="/">Home</a> / program results{% endblock %}
+{% block title %}Program results{% endblock %}
+{% block content %}
 <ul>
   {% for result in results %}
     <li>
@@ -9,3 +11,4 @@
 </ul>
 
 <a href="/results/{{ program_id }}/add">add-result</a>
+{% endblock %}

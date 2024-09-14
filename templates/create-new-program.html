@@ -1,5 +1,7 @@
-<!DOCTYPE html>
-
+{% extends "layout.html" %}
+{% block path %}<a href="/">Home</a> / create a new program{% endblock %}
+{% block title %}Create a new program{% endblock %}
+{% block content %}
 <script>
   function validateText(name, value) {
     if (typeof value !== "string" || value.length > 100) {
@@ -14,7 +16,6 @@
   }
 </script>
 
-<a href="/">Home</a> / create-program
 <form action="/create-program" method="POST" id="program_data" onsubmit="return validateForm(this)">
   <h1>Create a new workout program</h1>
   <label for="program_name">Name of the workout program:</label>
@@ -23,3 +24,4 @@
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
   <input type="submit" value="Create program">
 </form>
+{% endblock %}

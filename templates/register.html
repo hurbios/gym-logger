@@ -1,5 +1,7 @@
-<!DOCTYPE html>
-
+{% extends "layout.html" %}
+{% block path %}<a href="/">Home</a> / register{% endblock %}
+{% block title %}Register{% endblock %}
+{% block content %}
 <script>
   function validateText(name, value) {
     if (typeof value !== "string" || value.length > 100) {
@@ -24,7 +26,6 @@
   }
 </script>
 
-<a href="/">Home</a> / create-user
 {% if session.username %}
 <p>You are logged in as {{ session.username }}</p>
 <a href="/logout">Logout</a>
@@ -39,3 +40,4 @@
   <input type="submit" value="Create user">
 </form>
 {% endif %}
+{% endblock %}

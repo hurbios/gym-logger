@@ -1,6 +1,8 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
+{% block path %}<a href="/">Home</a> / <a href="/results/{{ program.id }}">program results</a> / add result{% endblock %}
+{% block title %}Create a new program{% endblock %}
+{% block content %}
 
-<a href="/">Home</a> / <a href="/edit-program/{{ program.id }}">edit-program</a> / edit-program-name
 <form action="/results/{{ program.id }}/save" method="POST" id="result">
   <h1>Add a new result</h1>
   <ul>
@@ -15,3 +17,4 @@
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
   <input type="submit" value="Save">
 </form>
+{% endblock %}
