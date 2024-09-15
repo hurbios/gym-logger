@@ -8,11 +8,12 @@ def get_results(program_id):
     result = db.session.execute(
         text(
             """
-                SELECT rs.date, e.name, r.result, rs.id
-                FROM resultsets rs
-                LEFT JOIN results r on rs.id = r.resultset
-                LEFT JOIN exercises e on r.exercise_id = e.id
-                WHERE rs.program_id = :program_id AND rs.user_id = :user_id
+                SELECT rs.date, e.id as eid, r.result, rs.id
+                FROM exercises e
+                LEFT JOIN results r on e.id = r.exercise_id
+                LEFT JOIN resultsets rs on rs.id = r.resultset
+                WHERE e.program_id = :program_id AND rs.user_id = :user_id
+                ORDER BY rs.date DESC, rs.id
             """
         ),
         {'program_id':program_id, 'user_id': session['user_id']}
@@ -31,12 +32,12 @@ def add_result_set(id, exercise_list):
             {
                 'program_id': id,
                 'user_id': session['user_id'],
-                'date': '2022-01-01'
+                'date': exercise_list['date']
             }
         )
     resultset_id = result.fetchone()[0]
     for exercise in exercise_list:
-        if utils.validate_number_type(exercise) and utils.validate_number_type(exercise_list[exercise]):
+        if exercise != 'date' and utils.validate_number_type(exercise) and utils.validate_number_type(exercise_list[exercise]):
             should_commit = True
             db.session.execute(
                 text('INSERT INTO results (resultset, exercise_id, result) \

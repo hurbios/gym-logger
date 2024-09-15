@@ -19,7 +19,9 @@
 <form action="/create-program" method="POST" id="program_data" onsubmit="return validateForm(this)">
   <h1>Create a new workout program</h1>
   <label for="program_name">Name of the workout program:</label>
-  <input type="text" id="program_name" name="program_name" rows="1" cols="30"></input>
+  <input type="text" id="program_name" name="program_name" rows="1" cols="30" required></input>
+  <label for="description">Description of the workout program:</label>
+  <input type="text" id="description" name="description" rows="1" cols="30"></input>
   <p>
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
   <input type="submit" value="Create program">

@@ -2,13 +2,27 @@
 {% block path %}<a href="/">Home</a> / program results{% endblock %}
 {% block title %}Program results{% endblock %}
 {% block content %}
-<ul>
-  {% for result in results %}
-    <li>
-      {{result.date}} - {{result.name}} - {{result.result}}
-    </li>
-  {% endfor %}
-</ul>
+<h1>{{ program.name }}</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">date</th>
+      {% for exercise in exercises %}
+        <th scope="col">{{exercise.name}}</th>
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for resultset_id in results %}
+    <tr>
+      <td scope="row">{{results[resultset_id].date}}</td>
+      {% for exercise in exercises %}
+        <td>{{ results[resultset_id].results[exercise.id] }}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
-<a href="/results/{{ program_id }}/add">add-result</a>
+<a class="btn btn-primary" href="/results/{{ program.id }}/add">add-result</a><br>
 {% endblock %}

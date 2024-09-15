@@ -57,7 +57,8 @@
     }
   }
 
-  function createTableColumn(type, attribute, attributeText, inputType, name, value, onClickHandler, innerText, min, max) {
+  function createTableColumn(props) {
+    const {type, attribute, attributeText, inputType, name, value, onClickHandler, innerText, min, max, elclass } = props
     const element = document.createElement(type)
     element.setAttribute(attribute, attributeText)
     element.setAttribute("form", "exercise-row-form")
@@ -68,6 +69,7 @@
     if (innerText) element.innerText=innerText
     if (max) element.setAttribute("min", min)
     if (max) element.setAttribute("max", max)
+    if (elclass) element.setAttribute("class", elclass)
 
     const td = document.createElement("td")
     td.appendChild(element)
@@ -80,11 +82,11 @@
     const row = document.getElementById(`exercise-row-${id}`)
     const form = document.getElementById("exercise-row-form")
     form.setAttribute("action", "/update-exercise/" + id.toString())
-    const td1 = createTableColumn("input", "placeholder", "exercise name", "text", "exercise_name", document.getElementById(`exercise-${id}-name`).getAttribute("data"))
-    const td2 = createTableColumn("input", "placeholder", "number of sets", "number", "exercise_sets", document.getElementById(`exercise-${id}-sets`).getAttribute("data"), null, null, "0", "999")
-    const td3 = createTableColumn("input", "placeholder", "number of reps", "number", "exercise_reps", document.getElementById(`exercise-${id}-reps`).getAttribute("data"), null, null, "0", "999")
-    const td4 = createTableColumn("button", "type", "submit", null, null, null, null, "save")
-    const td5 = createTableColumn("button", "type", "button", null, null, null, (e) => location.reload(), "cancel")
+    const td1 = createTableColumn({type:"input", attribute: "placeholder", attributeText: "exercise name", inputType:"text", name:"exercise_name", value: document.getElementById(`exercise-${id}-name`).getAttribute("data")})
+    const td2 = createTableColumn({type:"input", attribute: "placeholder", attributeText: "number of sets", inputType: "number", name: "exercise_sets", value: document.getElementById(`exercise-${id}-sets`).getAttribute("data"), min: "0", max: "999"})
+    const td3 = createTableColumn({type:"input", attribute:"placeholder", attributeText:"number of reps", inputType:"number", name:"exercise_reps", value: document.getElementById(`exercise-${id}-reps`).getAttribute("data"), min: "0", max: "999"})
+    const td4 = createTableColumn({type: "button", attribute:"type", attributeText:"submit", innerText:"save", elclass: "btn btn-primary"})
+    const td5 = createTableColumn({type: "button", attribute:"type", attributeText:"button", onClickHandler:(e) => location.reload(), innerText:"cancel", elclass: "btn btn-secondary"})
     row.replaceChildren(td1,td2,td3,td4,td5)
     
   }
@@ -129,37 +131,42 @@
     if ("{{ has_results }}" === "True") {
       disableButtons()
       disableInputs()
-      document.getElementById("program-disbled-notification").hidden = false
+      document.getElementById("program-disabled-notification").hidden = false
+      document.getElementById("program-allowed-notification").hidden = true
     }
   }
 </script>
 
 <h1>{{ program_name }} <small>(<a href="/edit-program/{{ program_id }}/edit">edit</a>)</small></h1>
-<i>Here you can edit your workout program.</i>
-<h3 id="program-disbled-notification" hidden>Program exercises cannot be edited because it has results.</h3>
+<p id="program-allowed-notification"><i>Here you can edit your workout program.</i></p>
+<p id="program-disabled-notification" hidden style="color:red">The exercises of this program cannot be edited because the program has results.</p>
 <p></p>
 <form id="exercise-row-form" method="POST" onsubmit="return validateEditExerciseForm(this)"></form>
 <input type="number" name="program_id" value="{{ program_id }}" form="exercise-row-form" hidden>
 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" form="exercise-row-form">
-<table>
-  <tr>
-    <th>Exercise name</th>
-    <th>Sets</th>
-    <th>Reps</th>
-    <th>Edit</th>
-    <th>Delete</th>
-  </tr>
-  {% for exercise in exercises %}
-  <tr key="{{ exercise.id }}" id="exercise-row-{{ exercise.id }}">
-    <td id="exercise-{{ exercise.id }}-name" data="{{ exercise.name }}">{{ exercise.name }}</td>
-    <td id="exercise-{{ exercise.id }}-sets" data="{{ exercise.sets }}">{{ exercise.sets }}</td>
-    <td id="exercise-{{ exercise.id }}-reps" data="{{ exercise.reps }}">{{ exercise.reps }}</td>
-    <td><button onclick="onEditButtonClick({{ exercise.id }})" class="edit button">Edit</button></td>
-    <td><button onclick="onDeleteButtonClick({{ exercise.id }})" class="delete button">Delete</button></td>
-  </tr>
-  {% endfor %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Exercise name</th>
+      <th scope="col">Sets</th>
+      <th scope="col">Reps</th>
+      <th scope="col">Edit</th>
+      <th scope="col">Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for exercise in exercises %}
+    <tr key="{{ exercise.id }}" id="exercise-row-{{ exercise.id }}">
+      <td id="exercise-{{ exercise.id }}-name" data="{{ exercise.name }}"  scope="row">{{ exercise.name }}</td>
+      <td id="exercise-{{ exercise.id }}-sets" data="{{ exercise.sets }}">{{ exercise.sets }}</td>
+      <td id="exercise-{{ exercise.id }}-reps" data="{{ exercise.reps }}">{{ exercise.reps }}</td>
+      <td><button onclick="onEditButtonClick({{ exercise.id }})" class="edit button btn"><span class="material-symbols-outlined">edit</span></button></td>
+      <td><button onclick="onDeleteButtonClick({{ exercise.id }})" class="delete button btn"><span class="material-symbols-outlined">delete</span></button></td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
-
+<hr style="margin-top: 4rem;">
 <form action="/add-exercise" method="POST" onsubmit="return validateNewExerciseForm(this)">
   <h3>Add new exercise</h3>
   <select id="template_select" onchange="optionOnChange(this)" placeholder="hello" class="input">
@@ -169,14 +176,14 @@
     <option value="{{ template.name }}">{{ template.name }}</option>
     {% endfor %}
   </select><br>
-  <input type="text"  name="exercise_name" class="input" placeholder="exercise name" id="new_exercise_name">
+  <input type="text"  name="exercise_name" class="input" placeholder="exercise name" id="new_exercise_name" required>
   <input type="number" name="exercise_sets" class="input" placeholder="number of sets" min="0" max="999">
   <input type="number" name="exercise_reps" class="input" placeholder="number of reps" min="0" max="999">
   <input type="number" name="program_id" class="input" value="{{ program_id }}" hidden>
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-  <button type="send" class="submit button">Add</button>
+  <button type="send" class="submit button btn btn-primary">Add</button>
 </form>
 
-<p>
-<button onclick="onDeleteProgramButtonClick({{ program_id }})">Delete program</button>
+<hr style="margin-top: 4rem;">
+<button onclick="onDeleteProgramButtonClick({{ program_id }})" class="btn" style="color: var(--bs-danger-text-emphasis)">Delete program</button>
 {% endblock %}

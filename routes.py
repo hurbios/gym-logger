@@ -68,9 +68,10 @@ def create_program():
         if utils.check_csrf_token(request.form):
             return Response('Invalid CSRF token', 403)
         name = request.form.get('program_name')
-        if not utils.validate(name, 'string'):
+        description = request.form.get('description')
+        if not utils.validate_all([name, description]):
             return Response('Invalid name', 400)
-        program_id = programs.create_program(name)
+        program_id = programs.create_program(name, description)
         return redirect('/edit-program/'+str(program_id))
 
 @app.route('/edit-program/<int:id>')
@@ -95,7 +96,7 @@ def edit_program(id):
     )
 
 @app.route('/edit-program/<int:id>/edit', methods=['GET', 'POST'])
-def edit_program_name(id):
+def update_program(id):
     if 'username' not in session:
         return redirect('/')
     if not utils.validate(id, 'number'):
@@ -104,12 +105,15 @@ def edit_program_name(id):
         program = programs.get_program(id)
         if not program or len(program) < 2:
             return redirect('/')
-        return render_template('edit-program-name.html', program_name=program[1], program_id=id)
+        return render_template('edit-program-name.html', program_name=program[1], description=program[2], program_id=id)
     else:
         if utils.check_csrf_token(request.form):
             return Response('Invalid CSRF token', 403)
         name = request.form.get('name')
-        programs.change_program_name(id, name)
+        description = request.form.get('description')
+        if not utils.validate_all([name, description]):
+            return Response('Invalid name', 400)
+        programs.update_program(id, name, description)
         return redirect('/edit-program/'+str(id))   
 
 @app.route('/delete_program/<int:id>', methods=['DELETE'])
@@ -180,8 +184,21 @@ def show_results(id):
         return redirect('/')
     if not utils.validate(id, 'number'):
         return Response('Incorrect program ID', 400)
+    program = programs.get_program(id)
+    if not program or len(program) < 1:
+        return redirect('/')
     results_list = results.get_results(id)
-    return render_template('results.html', results=results_list, program_id=id)
+    exercises_list = exercises.get_program_exercises(id)
+    results_by_id = {}
+    for result in results_list:
+        if result.id not in results_by_id:
+            results_by_id[result.id] = {}
+        if 'results' not in results_by_id[result.id]:
+            results_by_id[result.id]['results'] = {}
+        results_by_id[result.id]['results'][result.eid] = result.result
+        if 'date' not in results_by_id[result.id]:
+            results_by_id[result.id]['date'] = result.date
+    return render_template('results.html', results=results_by_id, program=program, exercises=exercises_list)
 
 @app.route('/results/<int:id>/add')
 def add_result(id):

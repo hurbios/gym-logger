@@ -5,14 +5,26 @@
 
 <form action="/results/{{ program.id }}/save" method="POST" id="result">
   <h1>Add a new result</h1>
-  <ul>
-    {% for exercise in exercises %}
-      <li>
-        <label for="{{ exercise.id }}">{{ exercise.name }}</label>
-        <input type="number" id="{{ exercise.id }}" name="{{ exercise.id }}" min="0" max="999"></input>
-      </li>
-    {% endfor %}
-  </ul>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">date</th>
+        {% for exercise in exercises %}
+          <th scope="col">{{exercise.name}}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td scope="row"><input type="date" id="date" name="date" required></input></td>
+        {% for exercise in exercises %}
+          <td>
+            <input type="number" id="{{ exercise.id }}" name="{{ exercise.id }}" min="0" max="999"></input>
+          </td>
+        {% endfor %}
+      </tr>
+    </tbody>
+  </table>
   <p>
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
   <input type="submit" value="Save">

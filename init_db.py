@@ -19,6 +19,7 @@ def init_database():
         CREATE TABLE programs (
             id SERIAL PRIMARY KEY,
             name TEXT,
+            description TEXT,
             user_id INTEGER REFERENCES users
         );
 
@@ -61,7 +62,7 @@ def add_test_data():
         INSERT INTO users (id, username, pwhash) VALUES (1, 'testuser', :hash1);
         INSERT INTO users (id, username, pwhash) VALUES (2, 'asdfasdf', :hash2);
         
-        INSERT INTO programs (id, name, user_id) VALUES (1, 'Golden six', 1);
+        INSERT INTO programs (id, name, description, user_id) VALUES (1, 'Golden six', 'The legendary G6 program...', 1);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (1, 'bench press', 3, 10, 1, 1);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (2, 'back squat', 3, 10, 1, 1);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (3, 'weighted pull up', 3, 10, 1, 1);
@@ -69,20 +70,20 @@ def add_test_data():
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (5, 'barbell curl', 3, 10, 1, 1);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (6, 'sit ups', 3, 10, 1, 1);
         
-        INSERT INTO programs (id, name, user_id) VALUES (2, 'Penakone', 1);
+        INSERT INTO programs (id, name, description, user_id) VALUES (2, 'Penakone', 'Perus penkkihaukkareeni', 1);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (7, 'vinopena', 4, 10, 2, 1);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (8, 'ojentajat', 3, 10, 2, 1);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (9, 'haukka', 2, 12, 2, 1);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (10, 'ylätalja', 3, 12, 2, 1);
         
-        INSERT INTO programs (id, name, user_id) VALUES (3, 'pure legs', 2);
+        INSERT INTO programs (id, name, description, user_id) VALUES (3, 'pure legs', 'Make your legs buuuurrrrnnnn!', 2);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (11, 'Front squat', 5, 5, 3, 2);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (12, 'Deadlift', 5, 5, 3, 2);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (13, 'Leg press', 3, 12, 3, 2);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (14, 'Leg curl', 3, 12, 3, 2);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (15, 'Standing calves', 3, 12, 3, 2);
 
-        INSERT INTO programs (id, name, user_id) VALUES (4, 'Fat to fit in 2 days', 2);
+        INSERT INTO programs (id, name, description, user_id) VALUES (4, 'Fat to fit in 2 days', 'Program to lose weight 20kg and gain muscle 15kg in 2 days!!1', 2);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (16, 'snatch', 3, 5, 4, 2);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (17, 'gobblet squat', 3, 20, 4, 2);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (18, 'land mines', 3, 20, 4, 2);

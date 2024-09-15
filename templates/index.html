@@ -19,18 +19,34 @@
 
 {% if session.username %}
 <p>
-<a href="/create-program">Create a new workout program</a>
-<p>
 <b>Your workout programs:</b>
 
-<ul>
-  {% for program in programs %}
-  {% set results_url = "/results/" + program[0]|string %}
-  {% set edit_url = "/edit-program/" + program[0]|string %}
-  
-  <li> {{ program[1] }} <a href= "{{ results_url }}">results</a> <a href= "{{ edit_url }}">edit</a></li>
-  {% endfor %}
-</ul>
+<div class="container overflow-hidden text-center">
+  <div class="row">
+    {% for program in programs %}
+    {% set results_url = "/results/" + program[0]|string %}
+    {% set edit_url = "/edit-program/" + program[0]|string %}
+    <div class="col p-2">
+      <div class="card text-bg-light" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{ program[1] }}</h5>
+          <p class="card-text">{{ program[2] }}</p>
+          <a href="{{ results_url }}" class="btn btn-primary">view / add results</a>
+          <a href="{{ edit_url }}" class="btn">edit program</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="col p-2">
+      <div class="card text-bg-dark" style="width: 18rem;">
+        <div class="card-body" >
+          <h5 class="card-title">Create a new program</h5>
+          <a href="/create-program" class="btn btn-secondary" >Create</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% else %}
 <form action="/login" method="POST" onsubmit="return validateForm(this)">
   <label for="username">Username:</label>

@@ -7,6 +7,7 @@ CREATE TABLE users (
 CREATE TABLE programs (
   id SERIAL PRIMARY KEY,
   name TEXT,
+  description TEXT,
   user_id INTEGER REFERENCES users
 );
 

@@ -18,10 +18,21 @@
 
 <form action="/edit-program/{{ program_id }}/edit" method="POST" id="program_data" onsubmit="return validateForm(this)">
   <h1>Change program name</h1>
-  <label for="name">Name of the workout program:</label>
-  <input type="text" id="name" name="name" rows="1" cols="30" value="{{ program_name }}"></input>
+
+  <div class="mb-3 row">
+    <label for="name" class="col-sm-2 col-form-label">Name of the workout program:</label>
+    <div class="col-sm-10">
+      <input type="text" id="name" name="name" rows="1" cols="30" value="{{ program_name }}" class="form-control" required></input>
+    </div>
+  </div>
+  <div class="mb-3 row">
+    <label for="description" class="col-sm-2 col-form-label">Description of the workout program:</label>
+    <div class="col-sm-10">
+      <input type="text" id="description" name="description" rows="1" cols="30" value="{{ description }}" class="form-control"></input>
+    </div>
+  </div>
   <p>
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-  <input type="submit" value="Save">
+  <input type="submit" value="Save" class="btn btn-primary">
 </form>
 {% endblock %}

@@ -32,11 +32,11 @@
 {% else %}
 <form action="/register" method="POST" onsubmit="return validateForm(this)">
   <label for="username">Username:</label>
-  <input type="text" name="username"></p>
+  <input type="text" name="username" required></p>
   <label for="password">Password:</label>
-  <input type="password" name="password"></p>
+  <input type="password" name="password" required></p>
   <label for="password2">Retype password:</label>
-  <input type="password" name="password2"></p>
+  <input type="password" name="password2" required></p>
   <input type="submit" value="Create user">
 </form>
 {% endif %}
