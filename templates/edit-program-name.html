@@ -12,23 +12,28 @@
   }
 
   function validateForm(form) {
-    return validateText("Name", form.name.value)
+    return validateText("Name", form.name.value) && validateText("Description", form.description.value)
   }
 </script>
 
 <form action="/edit-program/{{ program_id }}/edit" method="POST" id="program_data" onsubmit="return validateForm(this)">
   <h1>Change program name</h1>
-
-  <div class="mb-3 row">
-    <label for="name" class="col-sm-2 col-form-label">Name of the workout program:</label>
-    <div class="col-sm-10">
-      <input type="text" id="name" name="name" rows="1" cols="30" value="{{ program_name }}" class="form-control" required></input>
+  <div class="container text-center" style="padding-top: 1rem; padding-bottom: 1rem;">
+    <div class="row align-items-start">
+      <div class="col-6 p-1">
+        <label for="name" class="col-form-label">Name of the workout program:</label>
+      </div>
+      <div class="col-6 p-1">
+        <input type="text" id="name" name="name" class="form-control" required value="{{ program_name }}"></input>
+      </div>
     </div>
-  </div>
-  <div class="mb-3 row">
-    <label for="description" class="col-sm-2 col-form-label">Description of the workout program:</label>
-    <div class="col-sm-10">
-      <input type="text" id="description" name="description" rows="1" cols="30" value="{{ description }}" class="form-control"></input>
+    <div class="row align-items-start">
+      <div class="col-6 p-1">
+        <label for="description" class="col-form-label">Description of the workout program:</label>
+      </div>
+      <div class="col-6 p-1">
+        <input type="text" id="description" name="description" class="form-control" value="{{ description }}"></input>
+      </div>
     </div>
   </div>
   <p>

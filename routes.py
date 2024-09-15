@@ -70,7 +70,7 @@ def create_program():
         name = request.form.get('program_name')
         description = request.form.get('description')
         if not utils.validate_all([name, description]):
-            return Response('Invalid name', 400)
+            return Response('Invalid input', 400)
         program_id = programs.create_program(name, description)
         return redirect('/edit-program/'+str(program_id))
 
@@ -112,7 +112,7 @@ def update_program(id):
         name = request.form.get('name')
         description = request.form.get('description')
         if not utils.validate_all([name, description]):
-            return Response('Invalid name', 400)
+            return Response('Invalid input', 400)
         programs.update_program(id, name, description)
         return redirect('/edit-program/'+str(id))   
 

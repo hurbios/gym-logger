@@ -12,18 +12,32 @@
   }
 
   function validateForm(form) {
-    return validateText("Name", form.program_name.value)
+    return validateText("Name", form.program_name.value) && validateText("Description", form.description.value)
   }
 </script>
 
 <form action="/create-program" method="POST" id="program_data" onsubmit="return validateForm(this)">
   <h1>Create a new workout program</h1>
-  <label for="program_name">Name of the workout program:</label>
-  <input type="text" id="program_name" name="program_name" rows="1" cols="30" required></input>
-  <label for="description">Description of the workout program:</label>
-  <input type="text" id="description" name="description" rows="1" cols="30"></input>
+  <div class="container text-center" style="padding-top: 1rem; padding-bottom: 1rem;">
+    <div class="row align-items-start">
+      <div class="col-6 p-1">
+        <label for="program_name" class="col-form-label">Name of the workout program:</label>
+      </div>
+      <div class="col-6 p-1">
+        <input type="text" id="program_name" name="program_name" class="form-control" required></input>
+      </div>
+    </div>
+    <div class="row align-items-start">
+      <div class="col-6 p-1">
+        <label for="description" class="col-form-label">Description of the workout program:</label>
+      </div>
+      <div class="col-6 p-1">
+        <input type="text" id="description" name="description" class="form-control"></input>
+      </div>
+    </div>
+  </div>
   <p>
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-  <input type="submit" value="Create program">
+  <input type="submit" value="Create program" class="btn btn-primary" style="margin-top: 1rem;">
 </form>
 {% endblock %}
