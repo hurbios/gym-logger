@@ -62,7 +62,7 @@ def add_test_data():
         INSERT INTO users (id, username, pwhash) VALUES (1, 'testuser', :hash1);
         INSERT INTO users (id, username, pwhash) VALUES (2, 'asdfasdf', :hash2);
         
-        INSERT INTO programs (id, name, description, user_id) VALUES (1, 'Golden six', 'The legendary G6 program...', 1);
+        INSERT INTO programs (id, name, description, user_id) VALUES (1, 'Full body', 'Just a full body workout...', 1);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (1, 'bench press', 3, 10, 1, 1);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (2, 'back squat', 3, 10, 1, 1);
         INSERT INTO exercises (id, name, sets, reps, program_id, user_id) VALUES (3, 'weighted pull up', 3, 10, 1, 1);

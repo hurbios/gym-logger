@@ -2,6 +2,7 @@ from db import db
 from flask import session
 from sqlalchemy.sql import text
 import utils
+from datetime import date
 
 
 def get_results(program_id):
@@ -32,7 +33,7 @@ def add_result_set(id, exercise_list):
             {
                 'program_id': id,
                 'user_id': session['user_id'],
-                'date': exercise_list['date']
+                'date': date.fromisoformat(exercise_list['date'])
             }
         )
     resultset_id = result.fetchone()[0]

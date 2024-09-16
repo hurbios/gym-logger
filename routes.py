@@ -218,6 +218,8 @@ def save_result(id):
         return Response('Invalid CSRF token', 403)
     if not utils.validate(id, 'number'):
         return Response('Incorrect program ID', 400)
+    if not utils.validate(request.form.get('date'), 'date'):
+        return Response('Invalid date', 400)
     # validate that program belongs to the user.
     if programs.get_program(id):
         results.add_result_set(id, request.form)

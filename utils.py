@@ -1,4 +1,5 @@
 from flask import session
+from datetime import date
 
 def check_csrf_token(form):
     return 'csrf_token' not in form or 'csrf_token' not in session or session['csrf_token'] != form['csrf_token']
@@ -11,6 +12,12 @@ def validate(value, validation_type):
         return type(value) == str and len(value) < 100
     if validation_type == 'number':
         return validate_number_type(value) and 0 <= int(value) < 1000
+    if validation_type == 'date':
+        try:
+            return date.fromisoformat(value)
+        except:
+            return False
+
     
 def validate_all(strings=[], numbers=[]):
     for string in strings:
