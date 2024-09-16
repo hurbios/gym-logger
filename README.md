@@ -50,9 +50,9 @@ Run production version wiht `flask run` or run development version with `flask -
   - frontend - Done
 - Workout program Deletion - Done
 - Add styling
-  - Use layout - TODO
-  - Add css - TODO
+  - Use layout - Done
+  - Add css - Done
 - Results frontend
-  - Make a table - TODO
+  - Make a table - Done
   - Add possibility to edit results - TODO
 - Dev setup - TODO
