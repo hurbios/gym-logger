@@ -23,9 +23,6 @@ Run production version wiht `flask run` or run development version with `flask -
 `pip install python-dotenv`
 
 
-/Applications/Postgres.app/Contents/Versions/latest/bin/psql
-
-
 ## TODO
 - DB connection -- Done
 - authentication -- Done
@@ -54,5 +51,5 @@ Run production version wiht `flask run` or run development version with `flask -
   - Add css - Done
 - Results frontend
   - Make a table - Done
-  - Add possibility to edit results - TODO
+  - Add possibility to delete results - Done
 - Dev setup - TODO

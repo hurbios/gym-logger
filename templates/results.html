@@ -2,6 +2,28 @@
 {% block path %}<a href="/">Home</a> / program results{% endblock %}
 {% block title %}Program results{% endblock %}
 {% block content %}
+<script>
+  function onDeleteButtonClick(id) {
+    if (id) {
+      if (confirm("Are you sure you want to delete the result?")) {
+        const xhr = new XMLHttpRequest()
+        xhr.open("DELETE", "/results/{{ program.id }}/delete/" + id.toString() + "?csrf_token={{ session.csrf_token }}")
+        xhr.onload = function () {
+          if (xhr.status === 204 || xhr.status === 200) {
+            location.reload()
+          } else {
+            alert("Result deletion failed.")
+          }
+        }
+        xhr.onerror = function() {
+          alert("Result deletion failed.")
+        }
+        xhr.send()
+      }
+    }
+  }
+</script>
+
 <h1>{{ program.name }}</h1>
 <table class="table">
   <thead>
@@ -10,6 +32,7 @@
       {% for exercise in exercises %}
         <th scope="col">{{exercise.name}}</th>
       {% endfor %}
+      <th scope="col">delete</th>
     </tr>
   </thead>
   <tbody>
@@ -19,6 +42,11 @@
       {% for exercise in exercises %}
         <td>{{ results[resultset_id].results[exercise.id] }}</td>
       {% endfor %}
+      <td>
+        <button onclick="onDeleteButtonClick({{ resultset_id }})" class="delete button btn">
+          <span class="material-symbols-outlined">delete</span>
+        </button>
+      </td>
     </tr>
     {% endfor %}
   </tbody>

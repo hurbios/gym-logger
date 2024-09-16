@@ -224,3 +224,17 @@ def save_result(id):
     if programs.get_program(id):
         results.add_result_set(id, request.form)
     return redirect('/results/'+str(id))
+
+@app.route('/results/<int:program_id>/delete/<int:id>', methods=['DELETE'])
+def delete_result(program_id,id):
+    if 'username' not in session:
+        return redirect('/')
+    if utils.check_csrf_token(request.args):
+        return Response('Invalid CSRF token', 403)
+    if not utils.validate_all([],[program_id, id]):
+        return Response('Incorrect program ID or resultset ID', 400)
+    # validate that resultset belongs to the user.
+    if not results.resultset_exists(id):
+        return Response('Incorrect resultset ID', 400)
+    results.delete_resultset(id)
+    return Response('', 204)
