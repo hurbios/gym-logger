@@ -22,13 +22,7 @@ def init_db():
 
 @app.errorhandler(400)
 def error(e):
-    print(e.code)
-    print(e.description)
     return render_template('error.html', description=e.description)
-
-@app.route('/debug')
-def debug():
-    abort(400, 'Resultset could not be deleted')
 
 #### Landing page ####
 @app.route('/')
