@@ -43,3 +43,6 @@ def register(username, password):
         return login(username, password)
     except:
         return False
+
+def regenerate_csrf():
+    session["csrf_token"] = secrets.token_hex(16)

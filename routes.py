@@ -73,6 +73,7 @@ def create_program():
     if 'username' not in session:
         return redirect('/')
     if request.method == 'GET':
+        users.regenerate_csrf()
         return render_template('create-new-program.html')
     else:
         if utils.check_csrf_token(request.form):
@@ -98,6 +99,7 @@ def edit_program(id):
     program_exercises = exercises.get_program_exercises(id)
     templates = exercises.get_exercise_templates(id)
     has_results = results.program_has_results(id)
+    users.regenerate_csrf()
     return render_template(
         'edit-program.html',
         program_name=program[1],
@@ -117,6 +119,7 @@ def update_program(id):
         program = programs.get_program(id)
         if not program or len(program) < 2:
             return redirect('/')
+        users.regenerate_csrf()
         return render_template('edit-program-name.html', program_name=program[1], description=program[2], program_id=id)
     else:
         if utils.check_csrf_token(request.form):
@@ -141,6 +144,7 @@ def remove_program(id):
         return Response('Program with results cannot be edited', 400)
     if not programs.delete_program(id):
         abort(400, 'Program could not be deleted')
+    users.regenerate_csrf()
     return Response('', 204)
 
 #### EXERCISE ENDPOINTS ####
@@ -159,6 +163,7 @@ def add_exercise():
     # Validate that program belongs to the user.
     if programs.get_program(program_id) and not results.program_has_results(program_id):
         if exercises.add_exercise(name, sets, reps, program_id):
+            users.regenerate_csrf()
             return redirect('/edit-program/' + str(program_id))
     abort(400, 'Exercise could not be added')
 
@@ -174,6 +179,7 @@ def remove_exercise(id):
         return Response('Program with results cannot be edited', 400)
     if not exercises.delete_exercise(id):
         return Response('Program with results cannot be edited', 400)
+    users.regenerate_csrf()
     return Response('', 204)
 
 @app.route('/update-exercise/<int:id>', methods=['POST'])
@@ -192,6 +198,7 @@ def update_exercise(id):
     if programs.get_program(program_id) and not results.program_has_results(program_id):
         if not exercises.update_exercise(id, name, sets, reps, program_id):
             abort(400, 'Exercise could not be updated')
+    users.regenerate_csrf()
     return redirect('/edit-program/' + str(program_id))
 
 #### RESULTS ####
@@ -215,6 +222,7 @@ def show_results(id):
         results_by_id[result.id]['results'][result.eid] = result.result
         if 'date' not in results_by_id[result.id]:
             results_by_id[result.id]['date'] = result.date
+    users.regenerate_csrf()
     return render_template('results.html', results=results_by_id, program=program, exercises=exercises_list)
 
 @app.route('/results/<int:id>/add')
@@ -225,6 +233,7 @@ def add_result(id):
         return Response('Incorrect program ID', 400)
     program = programs.get_program(id)
     exercise_list = exercises.get_program_exercises(id)
+    users.regenerate_csrf()
     return render_template('add-result.html', program=program, exercises=exercise_list)
 
 @app.route('/results/<int:id>/save', methods=['POST'])
@@ -241,6 +250,7 @@ def save_result(id):
     if programs.get_program(id):
         if not results.add_result_set(id, request.form):
             abort(400, 'Resultset could not be saved')
+    users.regenerate_csrf()
     return redirect('/results/'+str(id))
 
 @app.route('/results/<int:program_id>/delete/<int:id>', methods=['DELETE'])
@@ -255,5 +265,6 @@ def delete_result(program_id,id):
     if not results.resultset_exists(id):
         return Response('Incorrect resultset ID', 400)
     if not results.delete_resultset(id):
-        return Response('Resultset could not be deleted', 400)  
+        return Response('Resultset could not be deleted', 400)
+    users.regenerate_csrf()
     return Response('', 204)
