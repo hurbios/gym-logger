@@ -49,11 +49,34 @@
 </div>
 {% else %}
 <form action="/login" method="POST" onsubmit="return validateForm(this)">
-  <label for="username">Username:</label>
-  <input type="text" name="username"></p>
-  <label for="password">Password:</label>
-  <input type="password" name="password"></p>
-  <input type="submit" value="Login"> or <a href="/register">register</a>
+  <div class="p-4">
+    <div class="row g-3 p-2">
+      <div class="col"></div>
+      <div class="col">
+        <label for="username" class="col-form-label">Username</label>
+      </div>
+      <div class="col">
+        <input type="text" id="username" name="username" class="form-control">
+      </div>
+      <div class="col"></div>
+    </div>
+    <div class="row g-3 p-2">
+      <div class="col"></div>
+      <div class="col">
+        <label for="password" class="col-form-label">Password</label>
+      </div>
+      <div class="col">
+        <input type="password" id="password" name="password" class="form-control">
+      </div>
+      <div class="col"></div>
+    </div>
+    <div class="row g-3 p-4">
+      <div class="col">
+        <input type="submit" value="Login" class="btn btn-primary"> or <a href="/register" class="link-opacity-50-hover">register</a>
+      </div>
+    </div>
+  </div>
+  
 </form>
 {% endif %}
 {% endblock %}
