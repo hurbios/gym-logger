@@ -10,7 +10,7 @@
       <tr>
         <th scope="col">date</th>
         {% for exercise in exercises %}
-          <th scope="col">{{exercise.name}}</th>
+          <th scope="col">{{exercise.name}} ({{exercise.sets}} x {{exercise.reps}})</th>
         {% endfor %}
       </tr>
     </thead>
@@ -19,7 +19,7 @@
         <td scope="row"><input type="date" id="date" name="date" required></input></td>
         {% for exercise in exercises %}
           <td>
-            <input type="number" id="{{ exercise.id }}" name="{{ exercise.id }}" min="0" max="999"></input>
+            <input type="number" id="{{ exercise.id }}" name="{{ exercise.id }}" min="0" max="999"></input> kg
           </td>
         {% endfor %}
       </tr>
