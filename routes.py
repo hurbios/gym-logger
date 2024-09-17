@@ -1,5 +1,5 @@
 from os import getenv
-from flask import redirect, render_template, request, session, Response
+from flask import redirect, render_template, request, session, Response, abort
 
 from app import app
 from init_db import init_database, add_test_data
@@ -19,6 +19,16 @@ def init_db():
     init_database()
     add_test_data()
     return Response('All good', 200)
+
+@app.errorhandler(400)
+def error(e):
+    print(e.code)
+    print(e.description)
+    return render_template('error.html', description=e.description)
+
+@app.route('/debug')
+def debug():
+    abort(400, 'Resultset could not be deleted')
 
 #### Landing page ####
 @app.route('/')
@@ -72,6 +82,8 @@ def create_program():
         if not utils.validate_all([name, description]):
             return Response('Invalid input', 400)
         program_id = programs.create_program(name, description)
+        if not program_id:
+            abort(400, 'Program could not be created')
         return redirect('/edit-program/'+str(program_id))
 
 @app.route('/edit-program/<int:id>')
@@ -113,7 +125,8 @@ def update_program(id):
         description = request.form.get('description')
         if not utils.validate_all([name, description]):
             return Response('Invalid input', 400)
-        programs.update_program(id, name, description)
+        if not programs.update_program(id, name, description):
+            abort(400, 'Program could not be updated')
         return redirect('/edit-program/'+str(id))   
 
 @app.route('/delete_program/<int:id>', methods=['DELETE'])
@@ -126,7 +139,8 @@ def remove_program(id):
         return Response('Incorrect program ID', 400)
     if not programs.get_program(id):
         return Response('Program with results cannot be edited', 400)
-    programs.delete_program(id)
+    if not programs.delete_program(id):
+        abort(400, 'Program could not be deleted')
     return Response('', 204)
 
 #### EXERCISE ENDPOINTS ####
@@ -144,8 +158,9 @@ def add_exercise():
         return Response('Incorrect input', 400)
     # Validate that program belongs to the user.
     if programs.get_program(program_id) and not results.program_has_results(program_id):
-        exercises.add_exercise(name, sets, reps, program_id)
-    return redirect('/edit-program/' + str(program_id))
+        if exercises.add_exercise(name, sets, reps, program_id):
+            return redirect('/edit-program/' + str(program_id))
+    abort(400, 'Exercise could not be added')
 
 @app.route('/delete_exercise/<int:id>', methods=['DELETE'])
 def remove_exercise(id):
@@ -157,7 +172,8 @@ def remove_exercise(id):
         return Response('Incorrect program ID', 400)
     if results.program_has_results(exercises.get_program_id_with_exercise_id(id)):
         return Response('Program with results cannot be edited', 400)
-    exercises.delete_exercise(id)
+    if not exercises.delete_exercise(id):
+        return Response('Program with results cannot be edited', 400)
     return Response('', 204)
 
 @app.route('/update-exercise/<int:id>', methods=['POST'])
@@ -174,7 +190,8 @@ def update_exercise(id):
         return Response('Incorrect input', 400)
     # Validate that program belongs to the user.
     if programs.get_program(program_id) and not results.program_has_results(program_id):
-        exercises.update_exercise(id, name, sets, reps, program_id)
+        if not exercises.update_exercise(id, name, sets, reps, program_id):
+            abort(400, 'Exercise could not be updated')
     return redirect('/edit-program/' + str(program_id))
 
 #### RESULTS ####
@@ -222,7 +239,8 @@ def save_result(id):
         return Response('Invalid date', 400)
     # validate that program belongs to the user.
     if programs.get_program(id):
-        results.add_result_set(id, request.form)
+        if not results.add_result_set(id, request.form):
+            abort(400, 'Resultset could not be saved')
     return redirect('/results/'+str(id))
 
 @app.route('/results/<int:program_id>/delete/<int:id>', methods=['DELETE'])
@@ -236,5 +254,6 @@ def delete_result(program_id,id):
     # validate that resultset belongs to the user.
     if not results.resultset_exists(id):
         return Response('Incorrect resultset ID', 400)
-    results.delete_resultset(id)
+    if not results.delete_resultset(id):
+        return Response('Resultset could not be deleted', 400)  
     return Response('', 204)
