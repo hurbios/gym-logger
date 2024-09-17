@@ -25,7 +25,7 @@
               You are logged in as <b>{{ session.username }}</b>
             </div>
             <div class="inner-username">
-              <a href="/logout">
+              <a href="/logout" class="link-opacity-50-hover">
                 <span class="material-symbols-outlined">
                   logout
                 </span>
@@ -36,7 +36,7 @@
         {% endif %}
       </div>
     </div>
-    <div class="row" style="background-color: gray;">
+    <div class="row" style="background: linear-gradient(white,lightgray);">
       <div class="col">
         <div class="path" style="text-align:left">{% block path %}{% endblock %}</div>
       </div>
