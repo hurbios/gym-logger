@@ -43,6 +43,7 @@ def update_program(id, name, description):
             {'name':name, 'description':description, 'id':id, 'user_id': session['user_id']}
         )
         db.session.commit()
+        return True
     except:
         return False
 
