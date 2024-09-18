@@ -76,7 +76,7 @@ If `psycopg2` doesn't install properly try installing `psycopg2-binary`
 - `psql -d << YOUR_DATABASE_NAME >> < schema.sql` for initializing db before using.
   - (e.g. `psql -d test < schema.sql`)
   - Other option is to use `/init_db` endpoint for initializing db with test data after starting flask. NOTE: This requires the app to be running. 
-- Run production version with `flask run` with FLASK_ENV=production environment variable or run development version with `flask --app app.py --debug run` with FLASK_ENV=develop environment variable
+- Run development version with `flask --app app.py --debug run` with FLASK_ENV=develop environment variable
 
 The application can be quit with `ctrl + c` and the virtual environment can be exited with `deactivate` after testing.
 
