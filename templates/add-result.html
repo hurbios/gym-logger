@@ -3,7 +3,18 @@
 {% block title %}Create a new program{% endblock %}
 {% block content %}
 
-<form action="/results/{{ program.id }}/save" method="POST" id="result">
+<script>
+  function validateNewExerciseForm(form) {
+    let valid = false
+    for (element of Object.values(document.getElementsByClassName('input-data'))) {
+      if (element.value) valid = true
+    }
+    if (!valid) alert("Please enter date and at least one result")
+    return valid
+  }
+</script>
+
+<form action="/results/{{ program.id }}/save" method="POST" id="result" onsubmit="return validateNewExerciseForm(this)">
   <h1>Add a new result</h1>
   <table class="table">
     <thead>
@@ -19,7 +30,7 @@
         <td scope="row"><input type="date" id="date" name="date" required></input></td>
         {% for exercise in exercises %}
           <td>
-            <input type="number" id="{{ exercise.id }}" name="{{ exercise.id }}" min="0" max="999"></input> kg
+            <input type="number" id="{{ exercise.id }}" name="{{ exercise.id }}" min="0" max="999" class="input-data"></input> kg
           </td>
         {% endfor %}
       </tr>
