@@ -5,6 +5,11 @@
 
 <div class="container p-4 g-2">
   <h1>Error - {{ description }}</h1>
+  {% if url %}
+  Return to <a href="{{ url }}" class="link-opacity-50-hover">{{ url }}</a>
+  {% else %}
+  Return <a href="/" class="link-opacity-50-hover">home</a>
+  {% endif %}
 </div>
 
 {% endblock %}

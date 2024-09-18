@@ -37,6 +37,14 @@ def register(username, password):
     # Using different less secure method pbkdf2 here because macOS doesn't come with openSSL (no scrypt by default)
     hash_value = generate_password_hash(password, method='pbkdf2')
     try:
+        result = db.session.execute(
+            text('SELECT id, pwhash FROM users WHERE username = :username'),
+            {'username':username}
+        )
+        resultArr = result.fetchone()
+        if resultArr:
+            return False
+        
         sql = text('INSERT INTO users (username, pwhash) VALUES (:username, :pwhash) RETURNING id')
         db.session.execute(sql, {'username':username, 'pwhash':hash_value})
         db.session.commit()
