@@ -40,7 +40,7 @@
     <tr>
       <td scope="row">{{results[resultset_id].date}}</td>
       {% for exercise in exercises %}
-        <td>{{ results[resultset_id].results[exercise.id] }} kg</td>
+        <td>{{ results[resultset_id].results[exercise.id] or "-" }} kg</td>
       {% endfor %}
       <td>
         <button onclick="onDeleteButtonClick({{ resultset_id }})" class="delete button btn">
