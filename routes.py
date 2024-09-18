@@ -20,6 +20,7 @@ def init_db():
     add_test_data()
     return Response('All good', 200)
 
+#### Error handlers ####
 @app.errorhandler(400)
 def error(e):
     return render_template('error.html', description=e.description)
