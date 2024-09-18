@@ -52,5 +52,9 @@
   </tbody>
 </table>
 
+{% if not results|length > 0 %}
+<p>No results yet...</p>
+{% endif %}
+
 <a class="btn btn-primary" href="/results/{{ program.id }}/add">add a new workout result</a><br>
 {% endblock %}

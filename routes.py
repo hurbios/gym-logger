@@ -98,6 +98,7 @@ def edit_program(id):
     return render_template(
         'edit-program.html',
         program_name=program[1],
+        description=program[2],
         program_id=id,
         exercises=program_exercises,
         templates=templates,
