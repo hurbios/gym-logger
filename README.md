@@ -85,6 +85,10 @@ The application can be quit with `ctrl + c` and the virtual environment can be e
   - testuser:test
   - asdfasdf:asdf
 
+### Running pylint
+- install pylint `pip install pylint`
+- to run lint for entire app, run `pylint *.py` in root directory of the app
+
 ## links
 - Icons from google fonts: https://fonts.google.com/
 - Styles from bootstrap: https://getbootstrap.com
