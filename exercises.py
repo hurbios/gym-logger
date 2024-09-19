@@ -1,26 +1,31 @@
-from db import db
 from flask import session
 from sqlalchemy.sql import text
+from sqlalchemy.exc import SQLAlchemyError
+from db import db
 
-def get_program_exercises(id):
+def get_program_exercises(id_):
     try:
         result = db.session.execute(
-            text('SELECT id, name, sets, reps FROM exercises WHERE program_id = :id AND user_id = :user_id'),
-            {'id':id, 'user_id': session['user_id']}
+            text("""
+                 SELECT id, name, sets, reps 
+                 FROM exercises 
+                 WHERE program_id = :id AND user_id = :user_id
+            """),
+            {'id':id_, 'user_id': session['user_id']}
         )
         return result.fetchall()
-    except:
+    except SQLAlchemyError:
         return False
 
 
-def get_exercise_templates(id):
+def get_exercise_templates(id_):
     try:
         result = db.session.execute(
             text('SELECT id, name FROM templates WHERE user_id = :user_id OR user_id is NULL'),
-            {'id':id, 'user_id': session['user_id']}
+            {'id':id_, 'user_id': session['user_id']}
         )
         return result.fetchall()
-    except:
+    except SQLAlchemyError:
         return False
 
 
@@ -40,25 +45,25 @@ def add_exercise(name, sets, reps, program_id):
         )
         db.session.commit()
         return True
-    except:
+    except SQLAlchemyError:
         return False
 
 
-def delete_exercise(id):
+def delete_exercise(id_):
     try:
         db.session.execute(
             text('DELETE FROM exercises WHERE id = :id AND user_id = :user_id'),
             {
-                'id': id,
+                'id': id_,
                 'user_id': session['user_id']
             }
         )
         db.session.commit()
         return True
-    except:
+    except SQLAlchemyError:
         return False
 
-def update_exercise(id, name, sets, reps, program_id):
+def update_exercise(id_, name, sets, reps, program_id):
     try:
         db.session.execute(
             text(
@@ -68,7 +73,7 @@ def update_exercise(id, name, sets, reps, program_id):
                 """
             ),
             {
-                'id': id,
+                'id': id_,
                 'name': name,
                 'sets': sets,
                 'reps': reps,
@@ -78,17 +83,17 @@ def update_exercise(id, name, sets, reps, program_id):
         )
         db.session.commit()
         return True
-    except:
+    except SQLAlchemyError:
         return False
 
-def get_program_id_with_exercise_id(id):
+def get_program_id_with_exercise_id(id_):
     try:
         result = db.session.execute(
             text('SELECT program_id FROM exercises WHERE id = :id AND user_id = :user_id'),
-            {'id':id, 'user_id': session['user_id']}
+            {'id':id_, 'user_id': session['user_id']}
         )
         return result.fetchone()[0]
-    except:
+    except SQLAlchemyError:
         return False
 
 def delete_program_exercises(program_id):
@@ -105,5 +110,5 @@ def delete_program_exercises(program_id):
         )
         db.session.commit()
         return True
-    except:
+    except SQLAlchemyError:
         return False

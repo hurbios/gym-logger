@@ -1,8 +1,9 @@
-from db import db
-from flask import session
-from sqlalchemy.sql import text
-import utils
 from datetime import date
+from flask import session
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.sql import text
+from db import db
+import utils
 
 
 def get_results(program_id):
@@ -21,28 +22,30 @@ def get_results(program_id):
             {'program_id':program_id, 'user_id': session['user_id']}
         )
         return result.fetchall()
-    except:
+    except SQLAlchemyError:
         return False
 
 
-def add_result_set(id, exercise_list):
+def add_result_set(id_, exercise_list):
     try:
         if not exercise_list or len(exercise_list) < 1:
-            return
+            return False
         should_commit = False
         result = db.session.execute(
                 text('INSERT INTO resultsets (program_id, user_id, date) \
                     VALUES (:program_id, :user_id, :date) \
                     RETURNING id;'),
                 {
-                    'program_id': id,
+                    'program_id': id_,
                     'user_id': session['user_id'],
                     'date': date.fromisoformat(exercise_list['date'])
                 }
             )
         resultset_id = result.fetchone()[0]
         for exercise in exercise_list:
-            if exercise != 'date' and utils.validate_number_type(exercise) and utils.validate_number_type(exercise_list[exercise]):
+            if exercise != 'date' and \
+                utils.validate_number_type(exercise) and \
+                utils.validate_number_type(exercise_list[exercise]):
                 should_commit = True
                 db.session.execute(
                     text('INSERT INTO results (resultset, exercise_id, result) \
@@ -55,11 +58,10 @@ def add_result_set(id, exercise_list):
                 )
         if should_commit:
             db.session.commit()
-        else:
-            db.session.rollback()
-            return False
-        return True
-    except:
+            return True
+        db.session.rollback()
+        return False
+    except SQLAlchemyError:
         return False
 
 def program_has_results(program_id):
@@ -75,7 +77,7 @@ def program_has_results(program_id):
             {'program_id':program_id, 'user_id': session['user_id']}
         )
         return result.fetchone()[0] > 0
-    except:
+    except SQLAlchemyError:
         return False
 
 def delete_program_results(program_id):
@@ -106,10 +108,10 @@ def delete_program_results(program_id):
         )
         db.session.commit()
         return True
-    except:
+    except SQLAlchemyError:
         return False
 
-def resultset_exists(id):
+def resultset_exists(id_):
     try:
         result = db.session.execute(
             text(
@@ -119,13 +121,13 @@ def resultset_exists(id):
                     WHERE id = :id AND user_id = :user_id
                 """
             ),
-            {'id':id, 'user_id': session['user_id']}
+            {'id':id_, 'user_id': session['user_id']}
         )
         return result.fetchone()[0] > 0
-    except:
+    except SQLAlchemyError:
         return False
 
-def delete_resultset(id):
+def delete_resultset(id_):
     try:
         db.session.execute(
             text(
@@ -135,7 +137,7 @@ def delete_resultset(id):
                     WHERE r.resultset = :id
                 """
             ),
-            {'id':id, 'user_id': session['user_id']}
+            {'id':id_, 'user_id': session['user_id']}
         )
         db.session.execute(
             text(
@@ -145,9 +147,9 @@ def delete_resultset(id):
                     WHERE id = :id AND user_id = :user_id
                 """
             ),
-            {'id':id, 'user_id': session['user_id']}
+            {'id':id_, 'user_id': session['user_id']}
         )
         db.session.commit()
         return True
-    except:
+    except SQLAlchemyError:
         return False

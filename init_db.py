@@ -104,8 +104,8 @@ def add_test_data():
     """
     db.session.execute(text(sql), { "hash1":hash1, "hash2":hash2 })
     db.session.commit()
-    
-    # fix serialized keys broken in mass insert. (https://stackoverflow.com/questions/18232714/postgresql-next-serial-value-in-a-table)
+
+    # fix serialized keys broken in mass insert.
     db.session.execute(text("SELECT setval(pg_get_serial_sequence('users','id'), 2)"))
     db.session.commit()
     db.session.execute(text("SELECT setval(pg_get_serial_sequence('programs','id'), 4)"))
