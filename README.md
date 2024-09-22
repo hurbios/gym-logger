@@ -11,6 +11,8 @@ There can be multiple users and each of the users have their own workouts, progr
 
 The program allows only adding exercise results of the results that are in the selected program. The application allows only creating full body workouts in the first version so a program can have only one type of workout.
 
+This application is not currently deployed in prod so it needs to be run locally to test it out.
+
 ## Quick start guide
 ### Prerequisites
 - postgresql installed, db created for the application and running
@@ -21,6 +23,10 @@ The program allows only adding exercise results of the results that are in the s
 
 Replace `<< YOUR_DATABASE_NAME >>` in following steps with db name that you wish to use with this application, e.g. `test`.
 Replace `<< YOUR_SECRET_FOR_SESSIONS >>` with some random length string containing a-z,0-9 chars, e.g. `asdf34tfg43gsag43ag4b3boaeibb3b3`
+
+- Run `psql`
+  - Run `CREATE DATABASE << YOUR_DATABASE_NAME >>;` in psql
+  - Quit psql `\q`
 
 - Create `.env` file in the root directory of this app containing the following properties:
   - ```
@@ -48,6 +54,11 @@ The application can be quit with `ctrl + c` and the virtual environment can be e
 
 
 ## More detailed intructions
+### Create database for the application in Postgresql
+- Run `psql`
+  - Run `CREATE DATABASE << YOUR_DATABASE_NAME >>;` in psql
+  - Quit psql `\q`
+
 ### Create virtual python env
 - Create the virtual environment by running `python3 -m venv venv`
 - Run `source venv/bin/activate` to activate the environment
