@@ -17,6 +17,7 @@ This application is not currently deployed in prod so it needs to be run locally
 ### Prerequisites
 - postgresql installed, db created for the application and running
 - python3 (& pip) installed
+- git installed
 
 ### Quick start guide for local testing 
 (more detailed instructions in later sections if needed)
@@ -27,6 +28,10 @@ Replace `<< YOUR_SECRET_FOR_SESSIONS >>` with some random length string containi
 - Run `psql`
   - Run `CREATE DATABASE << YOUR_DATABASE_NAME >>;` in psql
   - Quit psql `\q`
+
+Clone this repository to your directory:
+- in the directory you want to clone the repository run `git clone https://github.com/hurbios/gym-logger.git`
+- go to the directory of the cloned app `cd gym-logger`
 
 - Create `.env` file in the root directory of this app containing the following properties:
   - ```
