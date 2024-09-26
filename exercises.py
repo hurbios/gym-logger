@@ -18,17 +18,6 @@ def get_program_exercises(id_):
         return False
 
 
-def get_exercise_templates(id_):
-    try:
-        result = db.session.execute(
-            text('SELECT id, name FROM templates WHERE user_id = :user_id OR user_id is NULL'),
-            {'id':id_, 'user_id': session['user_id']}
-        )
-        return result.fetchall()
-    except SQLAlchemyError:
-        return False
-
-
 def add_exercise(name, sets, reps, program_id):
     try:
         db.session.execute(

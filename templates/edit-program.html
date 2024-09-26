@@ -138,11 +138,6 @@
     })
     row.replaceChildren(td1,td2,td3,td4,td5)
   }
-  
-  function optionOnChange(selectedObject) {
-    if (selectedObject.value)
-      document.getElementById("new_exercise_name").value = selectedObject.value
-  }
 
   function validateNumber(name, value) {
     if ((typeof value !== "number" && (typeof value === 'string' && isNaN(value))) 
@@ -239,13 +234,6 @@
 <hr style="margin-top: 4rem;">
 <form action="/add-exercise" method="POST" onsubmit="return validateNewExerciseForm(this)">
   <h3>Add new exercise</h3>
-  <select id="template_select" onchange="optionOnChange(this)" placeholder="hello" class="input">
-    <option value="" selected disabled hidden>Presaved exercises</option>
-    <option value=""></option>
-    {% for template in templates %}
-    <option value="{{ template.name }}">{{ template.name }}</option>
-    {% endfor %}
-  </select><br>
   <input type="text"  name="exercise_name" class="input" placeholder="exercise name" id="new_exercise_name" required>
   <input type="number" name="exercise_sets" class="input" placeholder="sets" min="0" max="999" required>
   <input type="number" name="exercise_reps" class="input" placeholder="reps" min="0" max="999" required>

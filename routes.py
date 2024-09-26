@@ -93,7 +93,6 @@ def edit_program(id_):
     if not program or len(program) < 1:
         return redirect('/')
     program_exercises = exercises.get_program_exercises(id_)
-    templates = exercises.get_exercise_templates(id_)
     has_results = results.program_has_results(id_)
     users.regenerate_csrf()
     return render_template(
@@ -102,7 +101,6 @@ def edit_program(id_):
         description=program[2],
         program_id=id_,
         exercises=program_exercises,
-        templates=templates,
         has_results=has_results
     )
 
