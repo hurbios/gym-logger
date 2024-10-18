@@ -48,6 +48,9 @@
   </div>
 </div>
 {% else %}
+  {% if err_message %}
+  <p style="color: red;">{{ err_message }}</p>
+  {% endif %}
 <form action="/login" method="POST" onsubmit="return validateForm(this)">
   <div class="p-4">
     <div class="row g-3 p-2">

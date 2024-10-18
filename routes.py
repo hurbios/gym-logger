@@ -31,9 +31,11 @@ def error(e):
 @app.route('/')
 def index():
     programs_list = []
+    err_message = session['err_message']
+    session['err_message'] = None
     if 'username' in session:
         programs_list = programs.get_programs()
-    return render_template('index.html', programs=programs_list)
+    return render_template('index.html', programs=programs_list, err_message=err_message)
 
 #### USER ROUTES ####
 @app.route('/login', methods=['POST'])
@@ -43,6 +45,9 @@ def login():
     if not utils.validate_all([username, password], []):
         return Response('Incorrect input', 400)
     users.login(username, password)
+    if 'username' not in session:
+        session['err_message'] = 'Invalid credentials. Please try again.'
+        return redirect('/')
     return redirect('/')
 
 @app.route('/logout')
