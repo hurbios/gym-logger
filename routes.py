@@ -63,7 +63,7 @@ def register():
         return render_template('register.html')
     username = request.form.get('username')
     password = request.form.get('password')
-    if not utils.validate_all([username, password], []):
+    if not utils.validate_all([username, password], []) or not utils.validate_password(password):
         return Response('Incorrect input', 400)
     if not users.register(username, password):
         abort(400, { 'message': 'username is taken', 'url': '/register' })

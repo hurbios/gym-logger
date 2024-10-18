@@ -48,7 +48,15 @@
         <label for="password" class="col-form-label">Password</label>
       </div>
       <div class="col">
-        <input type="password" id="password" name="password" class="form-control" required>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="form-control"
+          pattern="(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,20}"
+          title="Password has to contain at least a number, an uppercase letter, a lowercase letter and 8 - 20 characters" 
+          required
+        >
       </div>
       <div class="col"></div>
     </div>

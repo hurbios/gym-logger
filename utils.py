@@ -1,3 +1,4 @@
+import re
 from datetime import date
 from flask import session
 from sqlalchemy.exc import SQLAlchemyError
@@ -30,3 +31,9 @@ def validate_all(strings, numbers):
         if not validate(number, 'number'):
             return False
     return True
+
+def validate_password(string):
+    constraints = re.compile('(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,20}')
+    if constraints.match(string):
+        return True
+    return False
