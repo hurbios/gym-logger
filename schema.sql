@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS templates;
 DROP TABLE IF EXISTS results;
 DROP TABLE IF EXISTS resultsets;
 DROP TABLE IF EXISTS exercises;
