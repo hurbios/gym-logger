@@ -108,3 +108,4 @@ The application can be quit with `ctrl + c` and the virtual environment can be e
 ## links
 - Icons from google fonts: https://fonts.google.com/
 - Styles from bootstrap: https://getbootstrap.com
+- Password input validation: https://www.w3schools.com/howto/howto_js_password_validation.asp
