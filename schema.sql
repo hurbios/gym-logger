@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS templates;
 DROP TABLE IF EXISTS results;
 DROP TABLE IF EXISTS resultsets;
 DROP TABLE IF EXISTS exercises;
@@ -39,10 +38,4 @@ CREATE TABLE results (
   exercise_id INTEGER REFERENCES exercises,
   resultset INTEGER REFERENCES resultsets,
   result INTEGER
-);
-
-CREATE TABLE templates (
-  id SERIAL PRIMARY KEY,
-  name TEXT,
-  user_id INTEGER REFERENCES users
 );
