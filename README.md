@@ -15,7 +15,7 @@ This application is not currently deployed in prod so it needs to be run locally
 
 ## Quick start guide
 ### Prerequisites
-- postgresql installed, db created for the application and running
+- postgresql installed and running
 - python3 (& pip) installed
 - git installed
 
