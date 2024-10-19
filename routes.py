@@ -31,8 +31,10 @@ def error(e):
 @app.route('/')
 def index():
     programs_list = []
-    err_message = session['err_message']
-    session['err_message'] = None
+    err_message = None
+    if 'err_message' in session:
+        err_message = session['err_message']
+        session['err_message'] = None
     if 'username' in session:
         programs_list = programs.get_programs()
     return render_template('index.html', programs=programs_list, err_message=err_message)
